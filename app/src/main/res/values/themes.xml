@@ -3,6 +3,15 @@
     <style name="Base.Theme.B07DemoSummer2024" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/cinnabar</item>
+        <item name="colorPrimaryVariant">@color/cinnabar_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/antique_gold</item>
+        <item name="colorOnSecondary">@color/ink</item>
+        <item name="android:colorBackground">@color/parchment</item>
+        <item name="colorSurface">@color/silk</item>
+        <item name="colorOnSurface">@color/ink</item>
+        <item name="colorOnBackground">@color/ink</item>
     </style>
 
     <style name="Theme.B07DemoSummer2024" parent="Base.Theme.B07DemoSummer2024" />
