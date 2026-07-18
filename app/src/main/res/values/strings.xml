@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">B07 Demo Summer 2024</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="delete_item">Delete Item</string>
     <string name="add_item">Add Item</string>
@@ -10,10 +9,16 @@
     <string name="spinner">Spinner</string>
     <string name="manage_items">Manage Items</string>
 
+    <string name="placeholder_artifact_name">Artifact Name</string>
+    <string name="placeholder_lot_number">Lot Number: Unique ID</string>
+    <string name="placeholder_category">Category: </string>
+    <string name="placeholder_material">Material: </string>
+    <string name="placeholder_dynasty">Dynasty Period: </string>
+    <string name="placeholder_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ullamcorper maximus tellus, condimentum tempus nulla ultrices non. Mauris eget blandit felis, nec sollicitudin purus. Donec ac metus viverra augue molestie aliquet. Donec risus augue, congue at dapibus et, bibendum ac lacus. Aliquam a eros semper, feugiat purus vel, pharetra tortor. Vestibulum porttitor aliquam sagittis. Nunc at efficitur massa. Nullam cursus egestas laoreet. Integer sit amet quam nulla.</string>
+    <string name="read_more">Read more</string>
+
     <string-array name="categories_array">
         <item>Books</item>
         <item>Movies</item>
     </string-array>
-
-
 </resources>

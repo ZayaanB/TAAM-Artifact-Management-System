@@ -16,35 +16,35 @@
             style="@style/TextAppearance.TAAM.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Artifact Name" />
+            android:text="@string/placeholder_artifact_name" />
 
         <TextView
             android:id="@+id/textLotNumber"
             style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lot Number: Unique ID" />
+            android:text="@string/placeholder_lot_number" />
 
         <TextView
             android:id="@+id/textCategory"
             style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Category: " />
+            android:text="@string/placeholder_category" />
 
         <TextView
             android:id="@+id/textMaterial"
             style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Material: " />
+            android:text="@string/placeholder_material" />
 
         <TextView
             android:id="@+id/textDynasty"
             style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dynasty Period: " />
+            android:text="@string/placeholder_dynasty" />
 
         <TextView
             android:id="@+id/textDescription"
@@ -53,13 +53,13 @@
             android:layout_height="wrap_content"
             android:maxLines="3"
             android:ellipsize="end"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ullamcorper maximus tellus, condimentum tempus nulla ultrices non. Mauris eget blandit felis, nec sollicitudin purus. Donec ac metus viverra augue molestie aliquet. Donec risus augue, congue at dapibus et, bibendum ac lacus. Aliquam a eros semper, feugiat purus vel, pharetra tortor. Vestibulum porttitor aliquam sagittis. Nunc at efficitur massa. Nullam cursus egestas laoreet. Integer sit amet quam nulla." />
+            android:text="@string/placeholder_description" />
 
         <Button
             android:id="@+id/buttonReadMore"
             style="@style/Widget.TAAM.Button.Admin"
             android:layout_width="144dp"
             android:layout_height="wrap_content"
-            android:text="Read more" />
+            android:text="@string/read_more" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
