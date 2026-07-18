@@ -4,63 +4,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    android:padding="0dp"
-    app:cardBackgroundColor="@color/border_tan"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    android:layout_margin="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textArtifactName"
             style="@style/TextAppearance.TAAM.Title"
-            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Artifact Name" />
 
         <TextView
+            android:id="@+id/textLotNumber"
             style="@style/TextAppearance.TAAM.Label"
-            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lot Number: Unique ID" />
 
         <TextView
+            android:id="@+id/textCategory"
             style="@style/TextAppearance.TAAM.Label"
-            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Category: " />
 
         <TextView
+            android:id="@+id/textMaterial"
             style="@style/TextAppearance.TAAM.Label"
-            android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Material: " />
 
-
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/textDynasty"
             style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dynasty Period: " />
 
         <TextView
+            android:id="@+id/textDescription"
             style="@style/TextAppearance.TAAM.Body"
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:ellipsize="end"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ullamcorper maximus tellus, condimentum tempus nulla ultrices non. Mauris eget blandit felis, nec sollicitudin purus. Donec ac metus viverra augue molestie aliquet. Donec risus augue, congue at dapibus et, bibendum ac lacus. Aliquam a eros semper, feugiat purus vel, pharetra tortor. Vestibulum porttitor aliquam sagittis. Nunc at efficitur massa. Nullam cursus egestas laoreet. Integer sit amet quam nulla." />
 
         <Button
+            android:id="@+id/buttonReadMore"
             style="@style/Widget.TAAM.Button.Admin"
-            android:id="@+id/button"
             android:layout_width="144dp"
             android:layout_height="wrap_content"
             android:text="Read more" />
