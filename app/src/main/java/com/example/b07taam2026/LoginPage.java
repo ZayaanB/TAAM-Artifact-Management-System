@@ -19,6 +19,8 @@ public class LoginPage extends AppCompatActivity {
     private AuthManager authManager;
     private RoleManager roleManager;
 
+    private String user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +54,7 @@ public class LoginPage extends AppCompatActivity {
 
     // validate input and attempt Firebase sign in
     public void handleLogin() {
-        String user = editUser.getText().toString().trim();
+        user = editUser.getText().toString().trim();
         String pass = editPass.getText().toString().trim();
         if (user.isEmpty() || pass.isEmpty()){
             Toast.makeText(this, "Enter both fields", Toast.LENGTH_SHORT).show();
@@ -83,6 +85,8 @@ public class LoginPage extends AppCompatActivity {
                 buttonLogin.setEnabled(true);
                 Intent intent = new Intent(LoginPage.this, HomeActivity.class);
                 intent.putExtra(EXTRA_IS_ADMIN, isAdmin);
+                intent.putExtra("USER_NAME", user);
+                intent.putExtra("UID", uid);
                 startActivity(intent);
                 finish(); // drop LoginPage from the back stack
             }

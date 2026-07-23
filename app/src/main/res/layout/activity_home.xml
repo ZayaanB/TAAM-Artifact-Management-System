@@ -35,6 +35,18 @@
         app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/artifact_card" />
 
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/adminMenuBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/manage_items"
+        android:src="@drawable/ic_launcher_foreground"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!--    <TextView-->
 <!--        android:id="@+id/textEmpty"-->
 <!--        style="@style/TextAppearance.TAAM.Secondary"-->
