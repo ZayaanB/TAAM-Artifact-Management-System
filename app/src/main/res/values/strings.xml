@@ -25,6 +25,10 @@
     <string name="action_sign_up">Create Account</string>
     <string name="prompt_log_in">Already have an account? Log in</string>
 
+    <!-- Home Page -->
+    <string name="search_hint">Search Artifact</string>
+    <string name="empty_no_artifacts">No matches</string>
+
     <string-array name="categories_array">
         <item>Books</item>
         <item>Movies</item>

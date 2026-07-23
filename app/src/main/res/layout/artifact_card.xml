@@ -56,6 +56,7 @@
             android:id="@+id/textDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ullamcorper maximus tellus, condimentum tempus nulla ultrices non. Mauris eget blandit felis, nec sollicitudin purus. Donec ac metus viverra augue molestie aliquet. Donec risus augue, congue at dapibus et, bibendum ac lacus. Aliquam a eros semper, feugiat purus vel, pharetra tortor. Vestibulum porttitor aliquam sagittis. Nunc at efficitur massa. Nullam cursus egestas laoreet. Integer sit amet quam nulla." />
 
         <Button

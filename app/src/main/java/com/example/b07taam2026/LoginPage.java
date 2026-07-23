@@ -81,7 +81,7 @@ public class LoginPage extends AppCompatActivity {
             @Override
             public void onResult(boolean isAdmin) {
                 buttonLogin.setEnabled(true);
-                Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                Intent intent = new Intent(LoginPage.this, HomeActivity.class);
                 intent.putExtra(EXTRA_IS_ADMIN, isAdmin);
                 startActivity(intent);
                 finish(); // drop LoginPage from the back stack
