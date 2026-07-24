@@ -114,7 +114,7 @@ public class SignUpPage extends AppCompatActivity {
             // go to home after signing in
             // wipes login/signup off the back stack.
             Toast.makeText(this, "Account created!", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             intent.putExtra(LoginPage.EXTRA_IS_ADMIN, false);
             intent.putExtra("USER_NAME", username);
             intent.putExtra("UID", uid);
