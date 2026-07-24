@@ -1,6 +1,7 @@
 package com.example.b07taam2026;
 
 import android.os.Bundle;
+import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.activity.EdgeToEdge;
@@ -23,15 +24,20 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        isAdmin = Boolean.parseBoolean(getIntent().getStringExtra(LoginPage.EXTRA_IS_ADMIN));
+        isAdmin = getIntent().getBooleanExtra(LoginPage.EXTRA_IS_ADMIN, false);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
-        FloatingActionButton adminMenu = findViewById(R.id.adminMenuBtn);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        FloatingActionButton adminMenu = findViewById(R.id.adminMenuBtn);
+        adminMenu.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        adminMenu.setOnClickListener(v -> {
+            // TODO: open add/manage-artifact screen
         });
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
