@@ -2,6 +2,8 @@ package com.example.b07taam2026;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.activity.EdgeToEdge;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +24,10 @@ public class HomeActivity extends AppCompatActivity {
     private String username;
     private String uid;
     private boolean isAdmin;
+
+    private final List<Artifact> artifactList = new ArrayList<>();
+    private ArtifactAdapter adapter;
+    private ArtifactManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +49,23 @@ public class HomeActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ArtifactAdapter adapter = new ArtifactAdapter(sampleArtifacts());
+        adapter = new ArtifactAdapter(artifactList);
         recyclerView.setAdapter(adapter);
+
+        manager = new ArtifactManager();
+        manager.startLive(new ArtifactManager.ArtifactCallback() {
+            @Override
+            public void onResult(List<Artifact> artifacts) {
+                artifactList.clear();
+                artifactList.addAll(artifacts);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(HomeActivity.this, "Load failed: " + errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
 
         SearchView search = findViewById(R.id.searchArtifacts);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -52,12 +74,9 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private List<Artifact> sampleArtifacts() {
-        return Arrays.asList(
-                new Artifact("A Tang 'Sancai'", "LOT001", "Ceramics", "Ceramic",
-                        "Tang Dynasty (618-907 CE)", "This tricolor (sancai) box has a round shape with shallow straight walls, a concave circular mouth, a flat base, and a slightly curved lid. The outer surface of the lid is decorated with intricate molded patterns, displaying exquisite and varied designs."),
-                new Artifact("A Blue-Glazed Ceramic 'Tiger'", "LOT002", "Ceramics", "Ceramic",
-                        "Three Kingdoms Period (220-280 CE)", "This blue-glazed ceramic tiger was crafted during the Three Kingdoms Period and originates from the Yue Kiln. It features a rounded and well-proportioned form with a slanting neck and circular mouth.")
-        );
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (manager != null) manager.stopLive();
     }
 }

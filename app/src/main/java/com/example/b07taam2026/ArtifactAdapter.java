@@ -58,7 +58,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textLotNumber.setText("Lot Number: " + artifact.getLotNumber());
             textCategory.setText("Category: " + artifact.getCategory());
             textMaterial.setText("Material: " + artifact.getMaterial());
-            textDynastyPeriod.setText("Dynasty Period: " + artifact.getDynastyPeriod());
+            textDynastyPeriod.setText("Dynasty Period: " + artifact.getDynasty());
             textDescription.setText(artifact.getDescription());
         }
     }
