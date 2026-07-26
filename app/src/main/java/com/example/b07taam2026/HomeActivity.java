@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
+import android.content.Intent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +73,15 @@ public class HomeActivity extends AppCompatActivity {
             @Override public boolean onQueryTextSubmit(String query) { return false; }
             @Override public boolean onQueryTextChange(String newText) { return false; }
         });
+        android.widget.Button buttonLogout = findViewById(R.id.buttonLogout);
+        AuthManager authManager = new AuthManager();
+        buttonLogout.setOnClickListener(v -> {
+            authManager.logout();
+            Intent intent = new Intent(HomeActivity.this, LoginPage.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 
     @Override
@@ -79,4 +89,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onDestroy();
         if (manager != null) manager.stopLive();
     }
+
+
 }
