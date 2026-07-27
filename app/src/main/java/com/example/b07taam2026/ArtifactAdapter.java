@@ -3,11 +3,13 @@ package com.example.b07taam2026;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -31,8 +33,19 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     private final Set<String> savedByMe = new HashSet<>();
     private String query = "";
 
+    @Nullable
+    private OnReadMoreClickListener readMoreListener;
+
+    public interface OnReadMoreClickListener {
+        void onReadMore(Artifact artifact);
+    }
+
     public ArtifactAdapter(List<Artifact> artifacts) {
         filter.submit(artifacts);
+    }
+
+    public void setOnReadMoreClickListener(OnReadMoreClickListener listener) {
+        this.readMoreListener = listener;
     }
 
     @NonNull
@@ -45,7 +58,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
 
     @Override
     public void onBindViewHolder(@NonNull ArtifactViewHolder holder, int position) {
-        holder.bind(filter.get(position));
+        holder.bind(filter.get(position), readMoreListener);
     }
 
     @Override
@@ -108,6 +121,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         private final ImageButton buttonSave;
         private final TextView textLikeCount;
         private final ImageView imageArtifact;
+        private final Button buttonReadMore;
 
         ArtifactViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -121,9 +135,10 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             buttonSave = itemView.findViewById(R.id.buttonSave);
             textLikeCount = itemView.findViewById(R.id.textLikeCount);
             imageArtifact = itemView.findViewById(R.id.imageArtifact);
+            buttonReadMore = itemView.findViewById(R.id.buttonReadMore);
         }
 
-        void bind(Artifact artifact) {
+        void bind(Artifact artifact, @Nullable OnReadMoreClickListener listener) {
             textName.setText(artifact.getName());
             textLotNumber.setText("Lot Number: " + artifact.getLotNumber());
             textCategory.setText("Category: " + artifact.getCategory());
@@ -161,6 +176,13 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
                     : R.drawable.ic_bookmark_outline);
             buttonSave.setOnClickListener(v -> {
                 if (uid != null) saveManager.setSaved(lot, uid, !saved);
+            });
+
+            buttonReadMore.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onReadMore(artifact);
+                }
+            });
             });
         }
     }

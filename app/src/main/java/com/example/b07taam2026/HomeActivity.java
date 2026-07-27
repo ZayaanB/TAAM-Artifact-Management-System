@@ -79,6 +79,7 @@ public class HomeActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ArtifactAdapter(new ArrayList<>());
+        adapter.setOnReadMoreClickListener(this::showArtifactDetail);
         recyclerView.setAdapter(adapter);
 
         manager = new ArtifactManager();
@@ -123,6 +124,14 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+    }
+
+    private void showArtifactDetail(Artifact artifact) {
+        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
