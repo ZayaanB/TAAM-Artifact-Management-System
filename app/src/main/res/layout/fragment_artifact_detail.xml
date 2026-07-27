@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/parchment"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    tools:context=".ArtifactDetailFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/textArtifactName"
+                style="@style/TextAppearance.TAAM.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Artifact Name" />
+
+            <TextView
+                android:id="@+id/textLotNumber"
+                style="@style/TextAppearance.TAAM.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Lot Number" />
+
+            <TextView
+                android:id="@+id/textCategory"
+                style="@style/TextAppearance.TAAM.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category" />
+
+            <TextView
+                android:id="@+id/textMaterial"
+                style="@style/TextAppearance.TAAM.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Material" />
+
+            <TextView
+                android:id="@+id/textDynastyPeriod"
+                style="@style/TextAppearance.TAAM.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dynasty Period" />
+
+            <TextView
+                android:id="@+id/textDescription"
+                style="@style/TextAppearance.TAAM.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Description" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/border_tan" />
+
+            <TextView
+                style="@style/TextAppearance.TAAM.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Comments" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
