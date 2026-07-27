@@ -3,15 +3,25 @@ package com.example.b07taam2026;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.ArtifactViewHolder> {
+
     private final List<Artifact> artifacts;
+    private final LikeManager likeManager = new LikeManager();
+    private final String uid = new AuthManager().getCurrentUid();
+    private final Map<String, Long> likeCounts = new HashMap<>();
+    private final Set<String> likedByMe = new HashSet<>();
 
     public ArtifactAdapter(List<Artifact> artifacts) {
         this.artifacts = artifacts;
@@ -35,13 +45,33 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         return artifacts.size();
     }
 
-    static class ArtifactViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        likeManager.startLive(uid, (counts, mine) -> {
+            likeCounts.clear();
+            likeCounts.putAll(counts);
+            likedByMe.clear();
+            likedByMe.addAll(mine);
+            notifyDataSetChanged();
+        });
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        likeManager.stopLive();
+    }
+
+    class ArtifactViewHolder extends RecyclerView.ViewHolder {
         private final TextView textName;
         private final TextView textLotNumber;
         private final TextView textCategory;
         private final TextView textMaterial;
         private final TextView textDynastyPeriod;
         private final TextView textDescription;
+        private final ImageButton buttonLike;
+        private final TextView textLikeCount;
 
         ArtifactViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -51,6 +81,8 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textMaterial = itemView.findViewById(R.id.textMaterial);
             textDynastyPeriod = itemView.findViewById(R.id.textDynastyPeriod);
             textDescription = itemView.findViewById(R.id.textDescription);
+            buttonLike = itemView.findViewById(R.id.buttonLike);
+            textLikeCount = itemView.findViewById(R.id.textLikeCount);
         }
 
         void bind(Artifact artifact) {
@@ -60,6 +92,18 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textMaterial.setText("Material: " + artifact.getMaterial());
             textDynastyPeriod.setText("Dynasty Period: " + artifact.getDynasty());
             textDescription.setText(artifact.getDescription());
+
+            String lot = artifact.getLotNumber();
+            Long count = likeCounts.get(lot);
+            boolean liked = likedByMe.contains(lot);
+
+            textLikeCount.setText(String.valueOf(count == null ? 0 : count));
+            buttonLike.setImageResource(liked
+                    ? R.drawable.ic_heart_filled
+                    : R.drawable.ic_heart_outline);
+            buttonLike.setOnClickListener(v -> {
+                if (uid != null) likeManager.setLike(lot, uid, !liked);
+            });
         }
     }
 }

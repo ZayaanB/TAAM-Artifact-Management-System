@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Widget.TAAM.Card.Artifact"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.TAAM.Card.Artifact"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    android:padding="0dp"
-    app:cardBackgroundColor="@color/border_tan"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    android:layout_marginStart="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginBottom="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            style="@style/TextAppearance.TAAM.Title"
             android:id="@+id/textArtifactName"
-            android:layout_width="wrap_content"
+            style="@style/TextAppearance.TAAM.Title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="Artifact Name" />
 
         <TextView
-            style="@style/TextAppearance.TAAM.Label"
             android:id="@+id/textLotNumber"
+            style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lot Number: Unique ID" />
 
         <TextView
-            style="@style/TextAppearance.TAAM.Label"
             android:id="@+id/textCategory"
+            style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Category: " />
 
         <TextView
-            style="@style/TextAppearance.TAAM.Label"
             android:id="@+id/textMaterial"
+            style="@style/TextAppearance.TAAM.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Material: " />
-
 
         <TextView
             android:id="@+id/textDynastyPeriod"
@@ -52,18 +52,51 @@
             android:text="Dynasty Period: " />
 
         <TextView
-            style="@style/TextAppearance.TAAM.Body"
             android:id="@+id/textDescription"
-            android:layout_width="wrap_content"
+            style="@style/TextAppearance.TAAM.Body"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:ellipsize="end"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ullamcorper maximus tellus, condimentum tempus nulla ultrices non. Mauris eget blandit felis, nec sollicitudin purus. Donec ac metus viverra augue molestie aliquet. Donec risus augue, congue at dapibus et, bibendum ac lacus. Aliquam a eros semper, feugiat purus vel, pharetra tortor. Vestibulum porttitor aliquam sagittis. Nunc at efficitur massa. Nullam cursus egestas laoreet. Integer sit amet quam nulla." />
+            android:maxLines="3"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
 
-        <Button
-            style="@style/Widget.TAAM.Button.Admin"
-            android:id="@+id/buttonReadMore"
-            android:layout_width="144dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Read more" />
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonReadMore"
+                style="@style/Widget.TAAM.Button.Admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Read more" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/buttonLike"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Like artifact"
+                android:padding="8dp"
+                android:src="@drawable/ic_heart_outline" />
+
+            <TextView
+                android:id="@+id/textLikeCount"
+                style="@style/TextAppearance.TAAM.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:minWidth="20dp"
+                android:text="0" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
