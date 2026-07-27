@@ -48,6 +48,37 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/adminManageAdminsBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:contentDescription="@string/manage_items"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/cinnabar"
+        app:iconTint="@color/white"
+        app:icon="@drawable/ic_add"
+        android:visibility="gone"
+        android:text="Manage Admins"
+        app:layout_constraintBottom_toTopOf="@+id/adminManageArtefactsBtn"
+        app:layout_constraintEnd_toEndOf="@+id/adminManageArtefactsBtn"
+        app:layout_constraintStart_toStartOf="@+id/adminManageArtefactsBtn"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/adminManageArtefactsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/manage_items"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/cinnabar"
+        app:iconTint="@color/white"
+        app:icon="@drawable/ic_add"
+        android:visibility="gone"
+        android:text="Manage Artefacts"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
     <!--    <TextView-->
 <!--        android:id="@+id/textEmpty"-->
 <!--        style="@style/TextAppearance.TAAM.Secondary"-->

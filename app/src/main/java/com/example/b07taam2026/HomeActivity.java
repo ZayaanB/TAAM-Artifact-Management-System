@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.activity.EdgeToEdge;
@@ -24,6 +25,7 @@ public class HomeActivity extends AppCompatActivity {
     private String username;
     private String uid;
     private boolean isAdmin;
+    private boolean isAdminMenuOpen = false; // Keeps track of whether or not the menu for the admin's controls is open
 
     private final List<Artifact> artifactList = new ArrayList<>();
     private ArtifactAdapter adapter;
@@ -35,16 +37,34 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+
+        FloatingActionButton adminMenuBtn = findViewById(R.id.adminMenuBtn);
+        ExtendedFloatingActionButton manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
+        ExtendedFloatingActionButton manageArtefactsBtn = findViewById(R.id.adminManageArtefactsBtn);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        FloatingActionButton adminMenu = findViewById(R.id.adminMenuBtn);
-        adminMenu.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-        adminMenu.setOnClickListener(v -> {
+        adminMenuBtn.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        adminMenuBtn.setOnClickListener(v -> {
             // TODO: open add/manage-artifact screen
+            if (!isAdminMenuOpen){// if the menu is closed, open it
+                manageAdminsBtn.setVisibility(View.VISIBLE);
+                manageArtefactsBtn.setVisibility(View.VISIBLE);
+
+                adminMenuBtn.setImageResource(R.drawable.ic_minus);
+                isAdminMenuOpen = true;
+            }
+            else{
+                manageAdminsBtn.setVisibility(View.GONE);
+                manageArtefactsBtn.setVisibility(View.GONE);
+
+                adminMenuBtn.setImageResource(R.drawable.ic_add);
+                isAdminMenuOpen = false;
+            }
         });
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
