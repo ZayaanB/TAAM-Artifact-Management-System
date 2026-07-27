@@ -127,7 +127,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void showArtifactDetail(Artifact artifact) {
-        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact);
+        String username = getIntent().getStringExtra("USER_NAME");
+        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact, username);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .addToBackStack(null)
