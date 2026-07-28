@@ -58,13 +58,16 @@ public class HomeActivity extends AppCompatActivity {
                 adminMenuBtn.setImageResource(R.drawable.ic_minus);
                 isAdminMenuOpen = true;
             }
-            else{
+            else{ // if menu is open close it
                 manageAdminsBtn.setVisibility(View.GONE);
                 manageArtefactsBtn.setVisibility(View.GONE);
 
                 adminMenuBtn.setImageResource(R.drawable.ic_add);
                 isAdminMenuOpen = false;
             }
+        });
+        manageArtefactsBtn.setOnClickListener(v -> {
+            // TODO: load Zayaan's page
         });
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
