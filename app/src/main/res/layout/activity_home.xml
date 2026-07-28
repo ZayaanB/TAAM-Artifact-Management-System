@@ -50,7 +50,7 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/adminManageAdminsBtn"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:contentDescription="@string/manage_items"
@@ -60,12 +60,12 @@
         app:icon="@drawable/ic_add"
         android:visibility="gone"
         android:text="Manage Admins"
-        app:layout_constraintBottom_toTopOf="@+id/adminManageArtefactsBtn"
-        app:layout_constraintEnd_toEndOf="@+id/adminManageArtefactsBtn"
-        app:layout_constraintStart_toStartOf="@+id/adminManageArtefactsBtn"/>
+        app:layout_constraintBottom_toTopOf="@+id/adminManageArtifactsBtn"
+        app:layout_constraintEnd_toEndOf="@+id/adminManageArtifactsBtn"
+        app:layout_constraintStart_toStartOf="@+id/adminManageArtifactsBtn"/>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/adminManageArtefactsBtn"
+        android:id="@+id/adminManageArtifactsBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -75,7 +75,7 @@
         app:iconTint="@color/white"
         app:icon="@drawable/ic_add"
         android:visibility="gone"
-        android:text="Manage Artefacts"
+        android:text="Manage Artifacts"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
