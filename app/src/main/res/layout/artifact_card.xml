@@ -14,6 +14,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/imageArtifact"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginBottom="8dp"
+            android:adjustViewBounds="true"
+            android:background="@color/border_tan"
+            android:contentDescription="@string/artifact_image_desc"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_foreground" />
+
         <TextView
             android:id="@+id/textArtifactName"
             style="@style/TextAppearance.TAAM.Title"
