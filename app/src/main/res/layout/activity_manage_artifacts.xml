@@ -61,14 +61,6 @@
                 android:layout_marginTop="4dp"
                 android:text="@string/section_edit_delete" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerManage"
-                android:layout_width="match_parent"
-                android:layout_height="420dp"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="true"
-                tools:listitem="@layout/row_manage_artifact" />
-
             <TextView
                 android:id="@+id/textNoMatches"
                 style="@style/TextAppearance.TAAM.Secondary"
@@ -78,6 +70,14 @@
                 android:gravity="center"
                 android:text="@string/empty_no_artifacts"
                 android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerManage"
+                android:layout_width="match_parent"
+                android:layout_height="420dp"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="true"
+                tools:listitem="@layout/row_manage_artifact" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAddForm"
