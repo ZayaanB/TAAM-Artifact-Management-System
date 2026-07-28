@@ -82,9 +82,7 @@ public class HomeActivity extends AppCompatActivity {
         manager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
             public void onResult(List<Artifact> artifacts) {
-                artifactList.clear();
-                artifactList.addAll(artifacts);
-                adapter.notifyDataSetChanged();
+                adapter.submitList(artifacts);
             }
 
             @Override
@@ -95,8 +93,17 @@ public class HomeActivity extends AppCompatActivity {
 
         SearchView search = findViewById(R.id.searchArtifacts);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override public boolean onQueryTextSubmit(String query) { return false; }
-            @Override public boolean onQueryTextChange(String newText) { return false; }
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.setQuery(query);
+                search.clearFocus();
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.setQuery(newText);
+                return true;
+            }
         });
     }
 

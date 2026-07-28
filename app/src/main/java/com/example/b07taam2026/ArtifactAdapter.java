@@ -12,22 +12,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.ArtifactViewHolder> {
 
-    private final List<Artifact> artifacts;
+    private final List<Artifact> allArtifacts = new ArrayList<>();
+    private final List<Artifact> visibleArtifacts = new ArrayList<>();
     private final LikeManager likeManager = new LikeManager();
     private final String uid = new AuthManager().getCurrentUid();
     private final Map<String, Long> likeCounts = new HashMap<>();
     private final Set<String> likedByMe = new HashSet<>();
+    private String query = "";
 
     public ArtifactAdapter(List<Artifact> artifacts) {
-        this.artifacts = artifacts;
+        if (artifacts != null) {
+            allArtifacts.addAll(artifacts);
+            visibleArtifacts.addAll(artifacts);
+        }
     }
 
     @NonNull
@@ -40,12 +47,12 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
 
     @Override
     public void onBindViewHolder(@NonNull ArtifactViewHolder holder, int position) {
-        holder.bind(artifacts.get(position));
+        holder.bind(visibleArtifacts.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return artifacts.size();
+        return visibleArtifacts.size();
     }
 
     @Override
@@ -64,6 +71,42 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         likeManager.stopLive();
+    }
+
+    public void submitList(List<Artifact> artifacts) {
+        allArtifacts.clear();
+        if (artifacts != null) allArtifacts.addAll(artifacts);
+        applyFilter();
+    }
+
+    public void setQuery(String q) {
+        query = (q == null) ? "" : q.trim().toLowerCase(Locale.ROOT);
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        visibleArtifacts.clear();
+        for (Artifact a : allArtifacts) {
+            // add the artifact to the visible list if it contains a match
+            // or the query is empty when we don't want to filter anything
+            if (query.isEmpty() || matches(a)) visibleArtifacts.add(a);
+        }
+        notifyDataSetChanged();
+    }
+
+    private boolean matches(Artifact a) {
+        // check if search text is a substring of these 6 mandatory fields
+        return contains(a.getName())
+                || contains(a.getLotNumber())
+                || contains(a.getCategory())
+                || contains(a.getMaterial())
+                || contains(a.getDynasty())
+                || contains(a.getDescription());
+    }
+
+    private boolean contains(String field) {
+        // simple substring matching
+        return field != null && field.toLowerCase(Locale.ROOT).contains(query);
     }
 
     class ArtifactViewHolder extends RecyclerView.ViewHolder {
