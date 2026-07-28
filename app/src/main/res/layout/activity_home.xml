@@ -21,6 +21,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/textNoMatches"
+        style="@style/TextAppearance.TAAM.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/empty_no_artifacts"
+        app:layout_constraintTop_toTopOf="@id/artifactRecyclerView"
+        app:layout_constraintBottom_toBottomOf="@id/artifactRecyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/artifactRecyclerView"
         android:layout_width="0dp"
