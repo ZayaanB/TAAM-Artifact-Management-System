@@ -1,5 +1,6 @@
 package com.example.b07taam2026;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -25,7 +26,7 @@ public class HomeActivity extends AppCompatActivity {
     private String username;
     private String uid;
     private boolean isAdmin;
-    private boolean isAdminMenuOpen = false; // Keeps track of whether or not the menu for the admin's controls is open
+    private boolean isAdminMenuOpen = false;
 
     private final List<Artifact> artifactList = new ArrayList<>();
     private ArtifactAdapter adapter;
@@ -40,7 +41,7 @@ public class HomeActivity extends AppCompatActivity {
 
         FloatingActionButton adminMenuBtn = findViewById(R.id.adminMenuBtn);
         ExtendedFloatingActionButton manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
-        ExtendedFloatingActionButton manageArtefactsBtn = findViewById(R.id.adminManageArtefactsBtn);
+        ExtendedFloatingActionButton manageArtifactsBtn = findViewById(R.id.adminManageArtifactsBtn);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -53,21 +54,23 @@ public class HomeActivity extends AppCompatActivity {
             // TODO: open add/manage-artifact screen
             if (!isAdminMenuOpen){// if the menu is closed, open it
                 manageAdminsBtn.setVisibility(View.VISIBLE);
-                manageArtefactsBtn.setVisibility(View.VISIBLE);
+                manageArtifactsBtn.setVisibility(View.VISIBLE);
 
                 adminMenuBtn.setImageResource(R.drawable.ic_minus);
                 isAdminMenuOpen = true;
             }
             else{ // if menu is open close it
                 manageAdminsBtn.setVisibility(View.GONE);
-                manageArtefactsBtn.setVisibility(View.GONE);
+                manageArtifactsBtn.setVisibility(View.GONE);
 
                 adminMenuBtn.setImageResource(R.drawable.ic_add);
                 isAdminMenuOpen = false;
             }
         });
-        manageArtefactsBtn.setOnClickListener(v -> {
-            // TODO: load Zayaan's page
+        manageArtifactsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ManageArtifactsActivity.class);
+            intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
+            startActivity(intent);
         });
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);

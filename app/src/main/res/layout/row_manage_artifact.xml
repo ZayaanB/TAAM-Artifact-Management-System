@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.TAAM.Card.Artifact"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginBottom="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textRowName"
+                style="@style/TextAppearance.TAAM.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="16sp"
+                android:text="Artifact Name" />
+
+            <TextView
+                android:id="@+id/textRowLot"
+                style="@style/TextAppearance.TAAM.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lot #" />
+
+            <TextView
+                android:id="@+id/textRowInfo"
+                style="@style/TextAppearance.TAAM.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Category · Dynasty" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/buttonRowEdit"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_edit"
+            android:padding="10dp"
+            android:src="@drawable/ic_edit"
+            app:tint="@color/jade" />
+
+        <ImageButton
+            android:id="@+id/buttonRowDelete"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_delete"
+            android:padding="10dp"
+            android:src="@drawable/ic_delete"
+            app:tint="@color/cinnabar" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
