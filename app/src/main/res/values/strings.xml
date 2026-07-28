@@ -28,6 +28,7 @@
     <!-- Home Page -->
     <string name="search_hint">Search Artifact</string>
     <string name="empty_no_artifacts">No matches</string>
+    <string name="artifact_image_desc">Artifact Image</string>
 
     <string-array name="categories_array">
         <item>Books</item>

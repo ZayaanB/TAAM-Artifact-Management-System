@@ -4,10 +4,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,6 +75,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         private final TextView textDescription;
         private final ImageButton buttonLike;
         private final TextView textLikeCount;
+        private final ImageView imageArtifact;
 
         ArtifactViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +87,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textDescription = itemView.findViewById(R.id.textDescription);
             buttonLike = itemView.findViewById(R.id.buttonLike);
             textLikeCount = itemView.findViewById(R.id.textLikeCount);
+            imageArtifact = itemView.findViewById(R.id.imageArtifact);
         }
 
         void bind(Artifact artifact) {
@@ -92,6 +97,18 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textMaterial.setText("Material: " + artifact.getMaterial());
             textDynastyPeriod.setText("Dynasty Period: " + artifact.getDynasty());
             textDescription.setText(artifact.getDescription());
+
+            String url = artifact.getImageUrl();
+
+            if (url != null && !url.isEmpty()) {
+                Glide.with(imageArtifact.getContext())
+                        .load(url)
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_launcher_foreground)
+                        .error(R.drawable.ic_launcher_foreground).into(imageArtifact);
+            } else {
+                imageArtifact.setImageResource(R.drawable.ic_launcher_foreground);
+            }
 
             String lot = artifact.getLotNumber();
             Long count = likeCounts.get(lot);
