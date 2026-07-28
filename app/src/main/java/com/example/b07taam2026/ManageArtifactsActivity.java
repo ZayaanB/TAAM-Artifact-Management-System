@@ -29,7 +29,6 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
             editNotes, editImageUrl;
     private Button buttonSubmit, buttonCancelEdit;
 
-    private final List<Artifact> artifactList = new ArrayList<>();
     private ManageArtifactAdapter adapter;
     private ArtifactManager manager;
 
@@ -46,7 +45,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         // embedded scroller through artifacts
         RecyclerView recycler = findViewById(R.id.recyclerManage);
         recycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ManageArtifactAdapter(artifactList, this);
+        adapter = new ManageArtifactAdapter(new ArrayList<>(), this);
         recycler.setAdapter(adapter);
 
         // same live artifact feed as home page
@@ -54,9 +53,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         manager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
             public void onResult(List<Artifact> artifacts) {
-                artifactList.clear();
-                artifactList.addAll(artifacts);
-                adapter.notifyDataSetChanged();
+                adapter.submitList(artifacts);
                 updateEmptyText();
             }
 
@@ -70,11 +67,16 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         // same search stub as home
         SearchView search = findViewById(R.id.searchManage);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override public boolean onQueryTextSubmit(String query) { 
-                return false; 
+            @Override public boolean onQueryTextSubmit(String query) {
+                adapter.setQuery(query);
+                updateEmptyText();
+                search.clearFocus();
+                return true;
             }
-            @Override public boolean onQueryTextChange(String newText) { 
-                return false; 
+            @Override public boolean onQueryTextChange(String newText) {
+                adapter.setQuery(newText);
+                updateEmptyText();
+                return true;
             }
         });
 
@@ -197,7 +199,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     }
 
     private void updateEmptyText() {
-        textNoMatches.setVisibility(artifactList.isEmpty() ? View.VISIBLE : View.GONE);
+        textNoMatches.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -22,8 +22,7 @@ import java.util.Set;
 
 public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.ArtifactViewHolder> {
 
-    private final List<Artifact> allArtifacts = new ArrayList<>();
-    private final List<Artifact> visibleArtifacts = new ArrayList<>();
+    private final ArtifactFilter filter = new ArtifactFilter(this::notifyDataSetChanged);
     private final LikeManager likeManager = new LikeManager();
     private final String uid = new AuthManager().getCurrentUid();
     private final Map<String, Long> likeCounts = new HashMap<>();
@@ -31,10 +30,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     private String query = "";
 
     public ArtifactAdapter(List<Artifact> artifacts) {
-        if (artifacts != null) {
-            allArtifacts.addAll(artifacts);
-            visibleArtifacts.addAll(artifacts);
-        }
+        filter.submit(artifacts);
     }
 
     @NonNull
@@ -47,13 +43,11 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
 
     @Override
     public void onBindViewHolder(@NonNull ArtifactViewHolder holder, int position) {
-        holder.bind(visibleArtifacts.get(position));
+        holder.bind(filter.get(position));
     }
 
     @Override
-    public int getItemCount() {
-        return visibleArtifacts.size();
-    }
+    public int getItemCount() { return filter.size(); }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -73,26 +67,9 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         likeManager.stopLive();
     }
 
-    public void submitList(List<Artifact> artifacts) {
-        allArtifacts.clear();
-        if (artifacts != null) allArtifacts.addAll(artifacts);
-        applyFilter();
-    }
+    public void submitList(List<Artifact> artifacts) { filter.submit(artifacts); }
 
-    public void setQuery(String q) {
-        query = (q == null) ? "" : q.trim().toLowerCase(Locale.ROOT);
-        applyFilter();
-    }
-
-    private void applyFilter() {
-        visibleArtifacts.clear();
-        for (Artifact a : allArtifacts) {
-            // add the artifact to the visible list if it contains a match
-            // or the query is empty when we don't want to filter anything
-            if (query.isEmpty() || matches(a)) visibleArtifacts.add(a);
-        }
-        notifyDataSetChanged();
-    }
+    public void setQuery(String q) { filter.setQuery(q); }
 
     private boolean matches(Artifact a) {
         // check if search text is a substring of these 6 mandatory fields
