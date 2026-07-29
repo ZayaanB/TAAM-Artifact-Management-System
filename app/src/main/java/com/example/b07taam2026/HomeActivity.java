@@ -3,6 +3,7 @@ package com.example.b07taam2026;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -28,9 +29,9 @@ public class HomeActivity extends AppCompatActivity {
     private boolean isAdmin;
     private boolean isAdminMenuOpen = false;
 
-    private final List<Artifact> artifactList = new ArrayList<>();
     private ArtifactAdapter adapter;
     private ArtifactManager manager;
+    private TextView textNoMatches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+
+        textNoMatches = findViewById(R.id.textNoMatches);
 
         FloatingActionButton adminMenuBtn = findViewById(R.id.adminMenuBtn);
         ExtendedFloatingActionButton manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
@@ -75,16 +78,15 @@ public class HomeActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ArtifactAdapter(artifactList);
+        adapter = new ArtifactAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
         manager = new ArtifactManager();
         manager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
             public void onResult(List<Artifact> artifacts) {
-                artifactList.clear();
-                artifactList.addAll(artifacts);
-                adapter.notifyDataSetChanged();
+                adapter.submitList(artifacts);
+                updateEmptyText();
             }
 
             @Override
@@ -95,8 +97,19 @@ public class HomeActivity extends AppCompatActivity {
 
         SearchView search = findViewById(R.id.searchArtifacts);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override public boolean onQueryTextSubmit(String query) { return false; }
-            @Override public boolean onQueryTextChange(String newText) { return false; }
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.setQuery(query);
+                updateEmptyText();
+                search.clearFocus();
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.setQuery(newText);
+                updateEmptyText();
+                return true;
+            }
         });
     }
 
@@ -104,5 +117,9 @@ public class HomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (manager != null) manager.stopLive();
+    }
+
+    private void updateEmptyText() {
+        textNoMatches.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 }

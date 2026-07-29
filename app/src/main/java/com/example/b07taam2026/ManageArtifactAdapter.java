@@ -20,11 +20,11 @@ public class ManageArtifactAdapter extends RecyclerView.Adapter<ManageArtifactAd
         void onDeleteClicked(Artifact artifact);
     }
 
-    private final List<Artifact> artifacts;
+    private final ArtifactFilter filter = new ArtifactFilter(this::notifyDataSetChanged);
     private final Listener listener;
 
     public ManageArtifactAdapter(List<Artifact> artifacts, Listener listener) {
-        this.artifacts = artifacts;
+        filter.submit(artifacts);
         this.listener = listener;
     }
 
@@ -38,13 +38,17 @@ public class ManageArtifactAdapter extends RecyclerView.Adapter<ManageArtifactAd
 
     @Override
     public void onBindViewHolder(@NonNull ManageViewHolder holder, int position) {
-        holder.bind(artifacts.get(position));
+        holder.bind(filter.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return artifacts.size();
+        return filter.size();
     }
+
+    public void submitList(List<Artifact> artifacts) { filter.submit(artifacts); }
+
+    public void setQuery(String q) { filter.setQuery(q); }
 
     private String safe(String s) {
         return s == null ? "—" : s;

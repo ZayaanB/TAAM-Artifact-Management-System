@@ -12,22 +12,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.ArtifactViewHolder> {
 
-    private final List<Artifact> artifacts;
+    private final ArtifactFilter filter = new ArtifactFilter(this::notifyDataSetChanged);
     private final LikeManager likeManager = new LikeManager();
     private final String uid = new AuthManager().getCurrentUid();
     private final Map<String, Long> likeCounts = new HashMap<>();
     private final Set<String> likedByMe = new HashSet<>();
+    private String query = "";
 
     public ArtifactAdapter(List<Artifact> artifacts) {
-        this.artifacts = artifacts;
+        filter.submit(artifacts);
     }
 
     @NonNull
@@ -40,13 +43,11 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
 
     @Override
     public void onBindViewHolder(@NonNull ArtifactViewHolder holder, int position) {
-        holder.bind(artifacts.get(position));
+        holder.bind(filter.get(position));
     }
 
     @Override
-    public int getItemCount() {
-        return artifacts.size();
-    }
+    public int getItemCount() { return filter.size(); }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -64,6 +65,25 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         likeManager.stopLive();
+    }
+
+    public void submitList(List<Artifact> artifacts) { filter.submit(artifacts); }
+
+    public void setQuery(String q) { filter.setQuery(q); }
+
+    private boolean matches(Artifact a) {
+        // check if search text is a substring of these 6 mandatory fields
+        return contains(a.getName())
+                || contains(a.getLotNumber())
+                || contains(a.getCategory())
+                || contains(a.getMaterial())
+                || contains(a.getDynasty())
+                || contains(a.getDescription());
+    }
+
+    private boolean contains(String field) {
+        // simple substring matching
+        return field != null && field.toLowerCase(Locale.ROOT).contains(query);
     }
 
     class ArtifactViewHolder extends RecyclerView.ViewHolder {
