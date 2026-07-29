@@ -65,9 +65,9 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/adminManageAdminsBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/manage_items"
         android:textColor="@color/white"
         app:backgroundTint="@color/cinnabar"
@@ -77,7 +77,7 @@
         android:text="Manage Admins"
         app:layout_constraintBottom_toTopOf="@+id/adminManageArtifactsBtn"
         app:layout_constraintEnd_toEndOf="@+id/adminManageArtifactsBtn"
-        app:layout_constraintStart_toStartOf="@+id/adminManageArtifactsBtn"/>
+        app:layout_constraintStart_toStartOf="@+id/adminManageArtifactsBtn" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/adminManageArtifactsBtn"
