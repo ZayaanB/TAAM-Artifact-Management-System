@@ -27,6 +27,7 @@
 
     <EditText
         android:id="@+id/editEmail"
+        style="@style/Widget.TAAM.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="emailAddress"
@@ -36,6 +37,7 @@
 
     <EditText
         android:id="@+id/editUsername"
+        style="@style/Widget.TAAM.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -46,6 +48,7 @@
 
     <EditText
         android:id="@+id/editPass"
+        style="@style/Widget.TAAM.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -56,6 +59,7 @@
 
     <EditText
         android:id="@+id/editConfirm"
+        style="@style/Widget.TAAM.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -78,6 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/prompt_log_in" />
+        android:text="@string/prompt_log_in"
+        android:textColor="@color/muted_taupe_dark" />
 
 </LinearLayout>

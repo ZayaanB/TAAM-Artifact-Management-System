@@ -8,6 +8,7 @@
     <color name="silk">#FBF8F1</color>
     <color name="ink">#24211C</color>
     <color name="muted_taupe">#6E665A</color>
+    <color name="muted_taupe_dark">#46423A</color>
     <color name="border_tan">#E0D8C8</color>
     <color name="white">#FFFFFF</color>
 </resources>
