@@ -82,6 +82,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
 
         buttonSubmit.setOnClickListener(v -> handleSubmit());
         buttonCancelEdit.setOnClickListener(v -> exitEditMode());
+        findViewById(R.id.buttonBackManage).setOnClickListener(v -> finish());
     }
 
     private void bindViews() {
