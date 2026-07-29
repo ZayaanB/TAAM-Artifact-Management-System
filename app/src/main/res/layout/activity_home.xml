@@ -10,6 +10,7 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchArtifacts"
+        android:theme="@style/ThemeOverlay.TAAM.SearchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
