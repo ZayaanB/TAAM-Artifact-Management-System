@@ -76,6 +76,18 @@ public class ArtifactDetailFragment extends Fragment {
         ((TextView) view.findViewById(R.id.textMaterial)).setText("Material: " + artifact.getMaterial());
         ((TextView) view.findViewById(R.id.textDynastyPeriod)).setText("Dynasty Period: " + artifact.getDynasty());
         ((TextView) view.findViewById(R.id.textDescription)).setText(artifact.getDescription());
+        ((TextView) view.findViewById(R.id.textCulturalOrigin)).setText("Cultural Origin: " + nullable(artifact.getCulturalOrigin()));
+        ((TextView) view.findViewById(R.id.textDimensions)).setText("Dimensions: " + nullable(artifact.getDimensions()));
+        ((TextView) view.findViewById(R.id.textConditionReport)).setText("Condition: " + nullable(artifact.getConditionReport()));
+        ((TextView) view.findViewById(R.id.textCurrentLocation)).setText("Location: " + nullable(artifact.getCurrentLocation()));
+        ((TextView) view.findViewById(R.id.textAcquisitionMethod)).setText("Acquired: " + nullable(artifact.getAcquisitionMethod()));
+        ((TextView) view.findViewById(R.id.textProvenance)).setText("Provenance: " + nullable(artifact.getProvenance()));
+        ((TextView) view.findViewById(R.id.textAccessionNumber)).setText("Accession No: " + nullable(artifact.getAccessionNumber()));
+        ((TextView) view.findViewById(R.id.textNotes)).setText("Notes: " + nullable(artifact.getNotes()));
+    }
+
+    private String nullable(String value) {
+        return value != null && !value.isEmpty() ? value : "N/A";
     }
 
     private void wireComposer(View view) {

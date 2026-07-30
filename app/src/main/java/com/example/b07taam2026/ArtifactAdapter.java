@@ -183,7 +183,6 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
                     listener.onReadMore(artifact);
                 }
             });
-            });
         }
     }
 }

@@ -62,16 +62,6 @@
             android:layout_height="wrap_content"
             android:text="Dynasty Period: " />
 
-        <TextView
-            android:id="@+id/textDescription"
-            style="@style/TextAppearance.TAAM.Body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:ellipsize="end"
-            android:maxLines="3"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
