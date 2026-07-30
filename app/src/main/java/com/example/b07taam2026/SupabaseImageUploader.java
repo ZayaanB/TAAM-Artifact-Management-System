@@ -129,6 +129,44 @@ public class SupabaseImageUploader {
         });
     }
 
+    public void deleteImage(String publicUrl) {
+        if (isBlank(publicUrl)) {
+            return;
+        }
+
+        // file path of image
+        String marker = "/storage/v1/object/public/" + bucketName + "/";
+        int markerIndex = publicUrl.indexOf(marker);
+        if (markerIndex < 0) {
+            return;
+        }
+        String filePath = publicUrl.substring(markerIndex + marker.length());
+
+        HttpUrl deleteUrl = buildStorageUrl("storage/v1/object", filePath);
+        if (deleteUrl == null) {
+            return;
+        }
+
+        Request request = new Request.Builder()
+                .url(deleteUrl)
+                .addHeader("apikey", supabaseAnonKey)
+                .addHeader("Authorization", "Bearer " + supabaseAnonKey)
+                .delete()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                return;
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                response.close();
+            }
+        });
+    }
+
     private byte[] readBytes(Uri imageUri) throws IOException {
         ContentResolver resolver = appContext.getContentResolver();
         try (InputStream inputStream = resolver.openInputStream(imageUri);
