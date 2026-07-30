@@ -36,6 +36,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         isAdmin = getIntent().getBooleanExtra(LoginPage.EXTRA_IS_ADMIN, false);
+        username = getIntent().getStringExtra("USER_NAME");
+        uid = getIntent().getStringExtra("UID");
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
@@ -73,6 +75,14 @@ public class HomeActivity extends AppCompatActivity {
         manageArtifactsBtn.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, ManageArtifactsActivity.class);
             intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
+            startActivity(intent);
+        });
+
+        manageAdminsBtn.setOnClickListener(v ->{
+            Intent intent = new Intent(HomeActivity.this, ManageAdminsActivity.class /* This class does not exist yet*/);
+            intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
+            intent.putExtra("USER_NAME", username);
+            intent.putExtra("UID", uid);
             startActivity(intent);
         });
 

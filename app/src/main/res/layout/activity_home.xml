@@ -73,7 +73,7 @@
         app:iconTint="@color/white"
         app:icon="@drawable/ic_add"
         android:visibility="gone"
-        android:text="Manage Admins"
+        android:text="@string/button_manage_admins"
         app:layout_constraintBottom_toTopOf="@+id/adminManageArtifactsBtn"
         app:layout_constraintEnd_toEndOf="@+id/adminManageArtifactsBtn"
         app:layout_constraintStart_toStartOf="@+id/adminManageArtifactsBtn"/>
@@ -89,7 +89,7 @@
         app:iconTint="@color/white"
         app:icon="@drawable/ic_add"
         android:visibility="gone"
-        android:text="Manage Artifacts"
+        android:text="@string/button_manage_artefacts"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
