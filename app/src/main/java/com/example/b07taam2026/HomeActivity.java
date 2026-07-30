@@ -111,6 +111,18 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
         });
+        android.widget.Button buttonLogout = findViewById(R.id.buttonLogout);
+        AuthManager authManager = new AuthManager();
+        buttonLogout.setOnClickListener(v -> {
+            if(manager != null){ //for DB listener, no more loadfail message.
+                manager.stopLive();
+            }
+            authManager.logout();
+            Intent intent = new Intent(HomeActivity.this, LoginPage.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 
     @Override
