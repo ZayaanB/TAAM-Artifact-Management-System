@@ -75,6 +75,10 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
             startActivity(intent);
         });
+        manageAdminsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, UserDebugActivity.class);
+            startActivity(intent);
+        });
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -128,7 +132,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private void showArtifactDetail(Artifact artifact) {
         String username = getIntent().getStringExtra("USER_NAME");
-        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact, username);
+        String uid = getIntent().getStringExtra("UID");
+        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact, username, uid);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .addToBackStack(null)

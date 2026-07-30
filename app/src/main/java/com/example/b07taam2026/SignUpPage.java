@@ -38,10 +38,16 @@ public class SignUpPage extends AppCompatActivity {
         buttonGoToLogin = findViewById(R.id.buttonGoToLogin);
 
         // firebase Auth and users database
-        auth = FirebaseAuth.getInstance();
-        usersRef = FirebaseDatabase
-                .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
-                .getReference("users");
+        try {
+            auth = FirebaseAuth.getInstance();
+            usersRef = FirebaseDatabase
+                    .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
+                    .getReference("users");
+        } catch (Exception e) {
+            // Firebase not available — show the layout but disable sign-up
+            buttonCreateAccount.setEnabled(false);
+            Toast.makeText(this, "App configuration error", Toast.LENGTH_LONG).show();
+        }
 
         buttonCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override

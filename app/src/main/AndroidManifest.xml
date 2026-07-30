@@ -37,6 +37,9 @@
             android:name=".ManageArtifactsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".UserDebugActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

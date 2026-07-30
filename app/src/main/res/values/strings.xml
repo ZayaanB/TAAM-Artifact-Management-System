@@ -78,6 +78,11 @@
     <string name="toast_fill_required">Please fill out all required fields</string>
     <string name="editing_banner">Editing artifact — lot number cannot be changed</string>
 
+    <!-- User Debug Screen -->
+    <string name="debug_users_title">User Debug</string>
+    <string name="debug_users_count">%d user(s)</string>
+    <string name="debug_users_empty">No users found</string>
+
     <string-array name="categories_array">
         <item>Books</item>
         <item>Movies</item>

@@ -65,70 +65,6 @@
                 android:layout_marginTop="8dp"
                 android:text="Description" />
 
-            <TextView
-                android:id="@+id/textCulturalOrigin"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Cultural Origin" />
-
-            <TextView
-                android:id="@+id/textDimensions"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Dimensions" />
-
-            <TextView
-                android:id="@+id/textConditionReport"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Condition Report" />
-
-            <TextView
-                android:id="@+id/textCurrentLocation"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Current Location" />
-
-            <TextView
-                android:id="@+id/textAcquisitionMethod"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Acquisition Method" />
-
-            <TextView
-                android:id="@+id/textProvenance"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Provenance" />
-
-            <TextView
-                android:id="@+id/textAccessionNumber"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Accession Number" />
-
-            <TextView
-                android:id="@+id/textNotes"
-                style="@style/TextAppearance.TAAM.Body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Notes" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -136,11 +72,39 @@
                 android:layout_marginBottom="8dp"
                 android:background="@color/border_tan" />
 
-            <TextView
-                style="@style/TextAppearance.TAAM.Title"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comments" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextAppearance.TAAM.Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Comments" />
+
+                <Button
+                    android:id="@+id/buttonSortNewest"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Newest"
+                    android:textAllCaps="false"
+                    android:textColor="@color/cinnabar"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/buttonSortOldest"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Oldest"
+                    android:textAllCaps="false"
+                    android:textColor="@color/muted_taupe"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentsRecyclerView"

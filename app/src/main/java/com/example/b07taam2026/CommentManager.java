@@ -71,4 +71,20 @@ public class CommentManager {
         Comment comment = new Comment(key, author, text, System.currentTimeMillis());
         lotRef.child(key).setValue(comment);
     }
+
+    public void toggleLike(String lotNumber, String commentId, String uid, boolean currentlyLiked) {
+        DatabaseReference likeRef = commentsRef.child(lotNumber).child(commentId).child("likes").child(uid);
+        if (currentlyLiked) {
+            likeRef.removeValue();
+        } else {
+            likeRef.setValue(true);
+        }
+    }
+
+    public void addReply(String lotNumber, String commentId, String author, String text) {
+        DatabaseReference repliesRef = commentsRef.child(lotNumber).child(commentId).child("replies");
+        String key = repliesRef.push().getKey();
+        if (key == null) return;
+        repliesRef.child(key).setValue(new Comment(key, author, text, System.currentTimeMillis()));
+    }
 }
