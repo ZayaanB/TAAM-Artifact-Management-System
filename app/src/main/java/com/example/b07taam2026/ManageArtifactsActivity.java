@@ -1,5 +1,6 @@
 package com.example.b07taam2026;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -7,6 +8,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -27,10 +30,14 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
             editDimensions, editCulturalOrigin, editCurrentLocation, editAccessionNumber,
             editAcquisitionMethod, editProvenance, editConditionReport, editDescription,
             editNotes, editImageUrl;
-    private Button buttonSubmit, buttonCancelEdit;
+    private Button buttonSubmit, buttonCancelEdit, buttonUploadImage;
 
     private ManageArtifactAdapter adapter;
     private ArtifactManager manager;
+    private SupabaseImageUploader imageUploader;
+
+    // system photo picker
+    private final ActivityResultLauncher<String> imagePicker = registerForActivityResult(new ActivityResultContracts.GetContent(), this::handleImagePicked);
 
     // prevent editing lot number
     private String editingLot = null;
@@ -59,29 +66,33 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
 
             @Override
             public void onError(String errorMessage) {
-                Toast.makeText(ManageArtifactsActivity.this,
-                        "Load failed: " + errorMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(ManageArtifactsActivity.this, "Load failed: " + errorMessage, Toast.LENGTH_LONG).show();
             }
         });
 
-        // same search stub as home
+        // same as home for searching
         SearchView search = findViewById(R.id.searchManage);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override public boolean onQueryTextSubmit(String query) {
+            @Override 
+            public boolean onQueryTextSubmit(String query) {
                 adapter.setQuery(query);
                 updateEmptyText();
                 search.clearFocus();
                 return true;
             }
-            @Override public boolean onQueryTextChange(String newText) {
+            @Override 
+            public boolean onQueryTextChange(String newText) {
                 adapter.setQuery(newText);
                 updateEmptyText();
                 return true;
             }
         });
 
+        imageUploader = new SupabaseImageUploader(this);
+
         buttonSubmit.setOnClickListener(v -> handleSubmit());
         buttonCancelEdit.setOnClickListener(v -> exitEditMode());
+        buttonUploadImage.setOnClickListener(v -> imagePicker.launch("image/*"));
         findViewById(R.id.buttonBackManage).setOnClickListener(v -> finish());
     }
 
@@ -108,9 +119,45 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         editImageUrl = findViewById(R.id.editImageUrl);
         buttonSubmit = findViewById(R.id.buttonSubmitArtifact);
         buttonCancelEdit = findViewById(R.id.buttonCancelEdit);
+        buttonUploadImage = findViewById(R.id.buttonUploadImage);
     }
 
-    // add or save, no real writes yet
+    // image url field gets the public url
+    private void handleImagePicked(Uri uri) {
+        if (uri == null) {
+            return;
+        }
+
+        String lot = editLot.getText().toString().trim();
+        if (lot.isEmpty()) {
+            Toast.makeText(this, R.string.toast_lot_before_upload, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        buttonUploadImage.setEnabled(false);
+        buttonUploadImage.setText(R.string.state_uploading);
+
+        imageUploader.uploadImage(uri, lot, new SupabaseImageUploader.UploadCallback() {
+            
+            // getting public url
+            @Override
+            public void onSuccess(String publicUrl) {
+                buttonUploadImage.setEnabled(true);
+                buttonUploadImage.setText(R.string.action_upload_image);
+                editImageUrl.setText(publicUrl);
+                Toast.makeText(ManageArtifactsActivity.this, R.string.toast_image_uploaded, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String message) {
+                buttonUploadImage.setEnabled(true);
+                buttonUploadImage.setText(R.string.action_upload_image);
+                Toast.makeText(ManageArtifactsActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // add or save
     private void handleSubmit() {
         String lot = editLot.getText().toString().trim();
         String name = editName.getText().toString().trim();
@@ -123,14 +170,64 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         }
 
         if (editingLot == null) {
-            // TODO: write new artifact to the database
-            Toast.makeText(this, R.string.toast_artifact_added, Toast.LENGTH_SHORT).show();
-            clearForm();
-        } else {
-            // TODO: update artifact in the database
-            Toast.makeText(this, R.string.toast_artifact_updated, Toast.LENGTH_SHORT).show();
-            exitEditMode();
+            buttonSubmit.setEnabled(false);
+            manager.addArtifact(lot, buildArtifactFromForm(), new ArtifactManager.WriteCallback() {
+                @Override
+                public void onSuccess() {
+                    buttonSubmit.setEnabled(true);
+                    Toast.makeText(ManageArtifactsActivity.this, R.string.toast_artifact_added, Toast.LENGTH_SHORT).show();
+                    clearForm();
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    buttonSubmit.setEnabled(true);
+                    Toast.makeText(ManageArtifactsActivity.this, "Add failed: " + errorMessage, Toast.LENGTH_LONG).show();
+                }
+            });
         }
+        else {
+            buttonSubmit.setEnabled(false);
+            manager.updateArtifact(editingLot, buildArtifactFromForm(), new ArtifactManager.WriteCallback() {
+                @Override
+                public void onSuccess() {
+                    buttonSubmit.setEnabled(true);
+                    Toast.makeText(ManageArtifactsActivity.this, R.string.toast_artifact_updated, Toast.LENGTH_SHORT).show();
+                    exitEditMode();
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    buttonSubmit.setEnabled(true);
+                    Toast.makeText(ManageArtifactsActivity.this, "Update failed: " + errorMessage, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
+    // snapshot of every form field
+    private Artifact buildArtifactFromForm() {
+        Artifact artifact = new Artifact();
+        artifact.setName(editName.getText().toString().trim());
+        artifact.setCategory(editCategory.getText().toString().trim());
+        artifact.setDynasty(editDynasty.getText().toString().trim());
+        artifact.setMaterial(nullIfEmpty(editMaterial));
+        artifact.setDimensions(nullIfEmpty(editDimensions));
+        artifact.setCulturalOrigin(nullIfEmpty(editCulturalOrigin));
+        artifact.setCurrentLocation(nullIfEmpty(editCurrentLocation));
+        artifact.setAccessionNumber(nullIfEmpty(editAccessionNumber));
+        artifact.setAcquisitionMethod(nullIfEmpty(editAcquisitionMethod));
+        artifact.setProvenance(nullIfEmpty(editProvenance));
+        artifact.setConditionReport(nullIfEmpty(editConditionReport));
+        artifact.setDescription(nullIfEmpty(editDescription));
+        artifact.setNotes(nullIfEmpty(editNotes));
+        artifact.setImageUrl(nullIfEmpty(editImageUrl));
+        return artifact;
+    }
+
+    private String nullIfEmpty(EditText field) {
+        String value = field.getText().toString().trim();
+        return value.isEmpty() ? null : value;
     }
 
     // prefill form, lock the lot number
@@ -169,10 +266,21 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete_dialog_title)
                 .setMessage(R.string.delete_dialog_message)
-                .setPositiveButton(R.string.delete_dialog_confirm, (dialog, which) -> {
-                    // TODO: delete artifact from the database
-                    Toast.makeText(this, R.string.toast_artifact_deleted, Toast.LENGTH_SHORT).show();
-                })
+                .setPositiveButton(R.string.delete_dialog_confirm, (dialog, which) ->
+                        manager.deleteArtifact(artifact.getLotNumber(), new ArtifactManager.WriteCallback() {
+                            @Override
+                            public void onSuccess() {
+                                if (artifact.getLotNumber() != null && artifact.getLotNumber().equals(editingLot)) {
+                                    exitEditMode();
+                                }
+                                Toast.makeText(ManageArtifactsActivity.this, R.string.toast_artifact_deleted, Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onError(String errorMessage) {
+                                Toast.makeText(ManageArtifactsActivity.this, "Delete failed: " + errorMessage, Toast.LENGTH_LONG).show();
+                            }
+                        }))
                 .setNegativeButton(R.string.delete_dialog_cancel, null)
                 .show();
     }
@@ -206,6 +314,8 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (manager != null) manager.stopLive();
+        if (manager != null) {
+            manager.stopLive();
+        }
     }
 }
