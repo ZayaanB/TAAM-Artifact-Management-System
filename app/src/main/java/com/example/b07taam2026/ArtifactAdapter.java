@@ -116,7 +116,6 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         private final TextView textCategory;
         private final TextView textMaterial;
         private final TextView textDynastyPeriod;
-        private final TextView textDescription;
         private final ImageButton buttonLike;
         private final ImageButton buttonSave;
         private final TextView textLikeCount;
@@ -130,7 +129,6 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textCategory = itemView.findViewById(R.id.textCategory);
             textMaterial = itemView.findViewById(R.id.textMaterial);
             textDynastyPeriod = itemView.findViewById(R.id.textDynastyPeriod);
-            textDescription = itemView.findViewById(R.id.textDescription);
             buttonLike = itemView.findViewById(R.id.buttonLike);
             buttonSave = itemView.findViewById(R.id.buttonSave);
             textLikeCount = itemView.findViewById(R.id.textLikeCount);
@@ -144,7 +142,6 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textCategory.setText("Category: " + artifact.getCategory());
             textMaterial.setText("Material: " + artifact.getMaterial());
             textDynastyPeriod.setText("Dynasty Period: " + artifact.getDynasty());
-            textDescription.setText(artifact.getDescription());
 
             String url = artifact.getImageUrl();
 
