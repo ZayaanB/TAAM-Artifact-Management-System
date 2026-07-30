@@ -23,6 +23,9 @@ public class LoginPage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
+            com.google.firebase.FirebaseApp.initializeApp(this);
+        } catch (Exception ignored) { }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
