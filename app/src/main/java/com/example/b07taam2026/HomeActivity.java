@@ -17,7 +17,6 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
-import android.content.Intent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
