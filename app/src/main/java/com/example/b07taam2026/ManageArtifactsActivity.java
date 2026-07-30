@@ -270,6 +270,8 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
                         manager.deleteArtifact(artifact.getLotNumber(), new ArtifactManager.WriteCallback() {
                             @Override
                             public void onSuccess() {
+                                imageUploader.deleteImage(artifact.getImageUrl());
+                                
                                 if (artifact.getLotNumber() != null && artifact.getLotNumber().equals(editingLot)) {
                                     exitEditMode();
                                 }

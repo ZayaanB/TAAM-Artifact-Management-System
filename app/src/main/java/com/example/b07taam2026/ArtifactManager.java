@@ -13,12 +13,14 @@ import java.util.List;
 
 public class ArtifactManager {
     private final DatabaseReference artifactsRef;
+    private final DatabaseReference likesRef;
     private ValueEventListener liveListener;
 
     public ArtifactManager() {
-        artifactsRef = FirebaseDatabase
-                .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
-                .getReference("artifacts");
+        FirebaseDatabase database = FirebaseDatabase
+                .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com");
+        artifactsRef = database.getReference("artifacts");
+        likesRef = database.getReference("likes");
     }
 
     // how artifact list results get reported back to the caller
@@ -56,10 +58,13 @@ public class ArtifactManager {
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
-    // remove artifact
+    // remove artifact and its likes
     public void deleteArtifact(String lotNumber, WriteCallback callback) {
         artifactsRef.child(lotNumber).removeValue()
-                .addOnSuccessListener(unused -> callback.onSuccess())
+                .addOnSuccessListener(unused -> {
+                    likesRef.child(lotNumber).removeValue();
+                    callback.onSuccess();
+                })
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
