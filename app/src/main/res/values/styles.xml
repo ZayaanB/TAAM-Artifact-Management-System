@@ -35,7 +35,7 @@
     </style>
 
     <!-- Form fields -->
-    <style name="Widget.TAAM.EditText" parent="Widget.MaterialComponents.EditText">
+    <style name="Widget.TAAM.EditText">
         <item name="android:textColor">@color/ink</item>
         <item name="android:textColorHint">@color/muted_taupe</item>
     </style>
