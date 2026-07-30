@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -83,16 +82,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     class CommentViewHolder extends RecyclerView.ViewHolder {
-        final TextView textAuthor;
-        final TextView textTime;
-        final TextView textBody;
-        final ImageButton buttonLike;
-        final TextView textLikeCount;
-        final Button buttonReply;
-        final LinearLayout layoutReplyInput;
+        final TextView textAuthor, textTime, textBody;
+        final ImageButton buttonLike, buttonDislike;
+        final TextView textLikeCount, textDislikeCount;
+        final Button buttonReply, buttonSubmitReply;
         final EditText editReplyText;
-        final Button buttonSubmitReply;
-        final LinearLayout layoutReplies;
+        final LinearLayout layoutReplyInput, layoutReplies;
 
         CommentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,7 +95,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             textTime = itemView.findViewById(R.id.textCommentTime);
             textBody = itemView.findViewById(R.id.textCommentText);
             buttonLike = itemView.findViewById(R.id.buttonLike);
+            buttonDislike = itemView.findViewById(R.id.buttonDislike);
             textLikeCount = itemView.findViewById(R.id.textLikeCount);
+            textDislikeCount = itemView.findViewById(R.id.textDislikeCount);
             buttonReply = itemView.findViewById(R.id.buttonReply);
             layoutReplyInput = itemView.findViewById(R.id.layoutReplyInput);
             editReplyText = itemView.findViewById(R.id.editReplyText);
@@ -119,27 +116,37 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             buttonLike.getDrawable().setTint(ContextCompat.getColor(itemView.getContext(),
                     liked ? R.color.cinnabar : R.color.muted_taupe));
             textLikeCount.setText(String.valueOf(comment.getLikeCount()));
-            textLikeCount.setVisibility(comment.getLikeCount() > 0 ? View.VISIBLE : View.GONE);
+            textLikeCount.setVisibility(comment.getLikeCount() > 0 ? View.VISIBLE : View.INVISIBLE);
             buttonLike.setOnClickListener(v -> {
-                if (commentManager != null && uid != null && lotNumber != null) {
+                if (commentManager != null && uid != null && lotNumber != null)
                     commentManager.toggleLike(lotNumber, comment.getId(), uid, liked);
-                }
             });
 
-            // Reply button
+            // Dislike button
+            boolean disliked = comment.isDislikedBy(uid);
+            buttonDislike.setImageResource(disliked ? R.drawable.ic_thumbs_down : R.drawable.ic_thumbs_down);
+            buttonDislike.getDrawable().setTint(ContextCompat.getColor(itemView.getContext(),
+                    disliked ? R.color.cinnabar : R.color.muted_taupe));
+            textDislikeCount.setText(String.valueOf(comment.getDislikeCount()));
+            textDislikeCount.setVisibility(comment.getDislikeCount() > 0 ? View.VISIBLE : View.INVISIBLE);
+            buttonDislike.setOnClickListener(v -> {
+                if (commentManager != null && uid != null && lotNumber != null)
+                    commentManager.toggleDislike(lotNumber, comment.getId(), uid, disliked);
+            });
+
+            // Reply toggle
             buttonReply.setOnClickListener(v -> {
                 boolean visible = layoutReplyInput.getVisibility() != View.VISIBLE;
                 layoutReplyInput.setVisibility(visible ? View.VISIBLE : View.GONE);
                 if (visible) editReplyText.requestFocus();
             });
 
-            // Submit reply
+            // Submit reply — use comment.getAuthor() to avoid "TFix" issue
             buttonSubmitReply.setOnClickListener(v -> {
                 String text = editReplyText.getText().toString().trim();
                 if (text.isEmpty()) return;
-                if (commentManager != null && lotNumber != null) {
-                    commentManager.addReply(lotNumber, comment.getId(), textAuthor.getText().toString(), text);
-                }
+                if (commentManager != null && lotNumber != null)
+                    commentManager.addReply(lotNumber, comment.getId(), comment.getAuthor(), text);
                 editReplyText.setText("");
                 layoutReplyInput.setVisibility(View.GONE);
             });
@@ -153,21 +160,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                             .inflate(R.layout.comment_row, layoutReplies, false);
                     replyView.setPadding(dp(8), 0, 0, 0);
 
-                    TextView rAuthor = replyView.findViewById(R.id.textCommentAuthor);
-                    TextView rTime = replyView.findViewById(R.id.textCommentTime);
-                    TextView rBody = replyView.findViewById(R.id.textCommentText);
+                    ((TextView) replyView.findViewById(R.id.textCommentAuthor))
+                            .setText(entry.getValue().getAuthor());
+                    ((TextView) replyView.findViewById(R.id.textCommentTime))
+                            .setText(DATE_FORMAT.format(new Date(entry.getValue().getTimestamp())));
+                    ((TextView) replyView.findViewById(R.id.textCommentText))
+                            .setText(entry.getValue().getText());
+
                     replyView.findViewById(R.id.buttonLike).setVisibility(View.GONE);
-                    replyView.findViewById(R.id.textLikeCount).setVisibility(View.GONE);
+                    replyView.findViewById(R.id.buttonDislike).setVisibility(View.GONE);
                     replyView.findViewById(R.id.buttonReply).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplyInput).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplies).setVisibility(View.GONE);
 
-                    Comment reply = entry.getValue();
-                    if (reply != null) {
-                        rAuthor.setText(reply.getAuthor());
-                        rTime.setText(DATE_FORMAT.format(new Date(reply.getTimestamp())));
-                        rBody.setText(reply.getText());
-                    }
                     layoutReplies.addView(replyView);
                 }
             }
