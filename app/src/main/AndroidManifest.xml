@@ -40,6 +40,7 @@
         <activity
             android:name=".UserDebugActivity"
             android:exported="false" />
+        <activity
             android:name=".ManageAdminsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
