@@ -3,6 +3,7 @@ package com.example.b07taam2026;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,6 +21,8 @@ public class LoginPage extends AppCompatActivity {
 
     private String user;
 
+    private CheckBox keepSignedIn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,14 +36,18 @@ public class LoginPage extends AppCompatActivity {
         editPass = findViewById(R.id.editPass);
         buttonLogin = findViewById(R.id.buttonLogin);
         buttonSignUp = findViewById(R.id.buttonSignUp);
+        keepSignedIn = findViewById(R.id.checkKeepSignedIn);
 
         // firebase helpers (Ryan's backend classes)
         authManager = new AuthManager();
         roleManager = new RoleManager();
 
-        if(authManager.isLoggedIn()){ //Auto login check
-            buttonLogin.setEnabled(false); //makes login button not clickable
-            checkRoleAndProceed(authManager.getCurrentUid()); //moves user into app from login page
+        android.content.SharedPreferences preferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        boolean keepLoggedIn = preferences.getBoolean("keepLoggedIn", false);
+
+        if(keepLoggedIn && authManager.isLoggedIn()){
+            buttonLogin.setEnabled(false);
+            checkRoleAndProceed(authManager.getCurrentUid());
         }
 
         buttonLogin.setOnClickListener(v -> handleLogin());
@@ -63,6 +70,9 @@ public class LoginPage extends AppCompatActivity {
         authManager.login(user, pass, new AuthManager.AuthCallback() {
             @Override
             public void onSuccess(String uid) {
+                android.content.SharedPreferences.Editor editor = getSharedPreferences("LoginPrefs", MODE_PRIVATE).edit(); // saves keep login choice
+                editor.putBoolean("keepLoggedIn", keepSignedIn.isChecked());
+                editor.apply();
                 checkRoleAndProceed(uid);
             }
 
