@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/manageRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ManageAdminsActivity">
+
+    <ImageButton
+        android:id="@+id/buttonBackManage"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/back"
+        android:padding="10dp"
+        android:src="@drawable/ic_back"
+        app:tint="@color/ink"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textPageTitle"
+        style="@style/TextAppearance.TAAM.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/manage_admins_title"
+        app:layout_constraintBottom_toBottomOf="@id/buttonBackManage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/buttonBackManage"
+        app:layout_constraintTop_toTopOf="@id/buttonBackManage" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchManage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        app:iconifiedByDefault="false"
+        app:queryHint="@string/search_hint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textPageTitle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/manageScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:clipToPadding="false"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchManage">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TextAppearance.TAAM.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/section_remove_admin" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/textNoMatches"
+                    style="@style/TextAppearance.TAAM.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:paddingHorizontal="32dp"
+                    android:text="@string/empty_no_artifacts"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerManage"
+                    android:layout_width="match_parent"
+                    android:layout_height="420dp"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="true"
+                    tools:listitem="@layout/row_manage_admin" />
+
+            </FrameLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAddForm"
+                style="@style/Widget.TAAM.Card.Artifact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textFormTitle"
+                        style="@style/TextAppearance.TAAM.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/section_add_admin" />
+
+                    <EditText
+                        android:id="@+id/editEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/hint_email"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1" />
+
+                    <Button
+                        android:id="@+id/buttonSubmitArtifact"
+                        style="@style/Widget.TAAM.Button.Primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/action_add_admin" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
