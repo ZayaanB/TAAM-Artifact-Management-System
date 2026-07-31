@@ -37,6 +37,7 @@ public class LoginPage extends AppCompatActivity {
         // firebase helpers (Ryan's backend classes)
         authManager = new AuthManager();
         roleManager = new RoleManager();
+
         if(authManager.isLoggedIn()){ //Auto login check
             buttonLogin.setEnabled(false); //makes login button not clickable
             checkRoleAndProceed(authManager.getCurrentUid()); //moves user into app from login page
