@@ -77,6 +77,10 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
             startActivity(intent);
         });
+        manageAdminsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, UserDebugActivity.class);
+            startActivity(intent);
+        });
 
         manageAdminsBtn.setOnClickListener(v ->{
             Intent intent = new Intent(HomeActivity.this, ManageAdminsActivity.class /* This class does not exist yet*/);
@@ -89,6 +93,7 @@ public class HomeActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ArtifactAdapter(new ArrayList<>());
+        adapter.setOnReadMoreClickListener(this::showArtifactDetail);
         recyclerView.setAdapter(adapter);
 
         manager = new ArtifactManager();
@@ -133,6 +138,16 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+    }
+
+    private void showArtifactDetail(Artifact artifact) {
+        String username = getIntent().getStringExtra("USER_NAME");
+        String uid = getIntent().getStringExtra("UID");
+        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact, username, uid);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

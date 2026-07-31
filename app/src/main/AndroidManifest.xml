@@ -38,6 +38,8 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".UserDebugActivity"
+            android:exported="false" />
             android:name=".ManageAdminsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

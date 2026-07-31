@@ -2,7 +2,7 @@ package com.example.b07taam2026;
 
 import com.google.firebase.database.Exclude;
 
-public class Artifact {
+public class Artifact implements java.io.Serializable {
     private String name;
     private String lotNumber;
     private String category;

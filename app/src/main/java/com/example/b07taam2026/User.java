@@ -5,6 +5,7 @@ public class User {
     private String email;
     private String username;
     private String role;
+    private String uid;
 
     // user constructors
     public User() {}
@@ -34,6 +35,8 @@ public class User {
     public void setRole(String role) { 
         this.role = role; 
     }
+    public String getUid() { return uid; }
+    public void setUid(String uid) { this.uid = uid; }
     public boolean isAdmin() {
         return "admin".equals(role);
     }

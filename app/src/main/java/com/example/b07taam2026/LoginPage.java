@@ -24,18 +24,27 @@ public class LoginPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            com.google.firebase.FirebaseApp.initializeApp(this);
+        } catch (Exception ignored) { }
         setContentView(R.layout.activity_login);
 
         // views from activity_login.xml
-        editUser = findViewById(R.id.editUser); 
-        editPass = findViewById(R.id.editPass); 
-        buttonLogin = findViewById(R.id.buttonLogin); 
+        editUser = findViewById(R.id.editUser);
+        editPass = findViewById(R.id.editPass);
+        buttonLogin = findViewById(R.id.buttonLogin);
         buttonSignUp = findViewById(R.id.buttonSignUp);
 
         // firebase helpers (Ryan's backend classes)
-        authManager = new AuthManager();
-        roleManager = new RoleManager();
-        
+        try {
+            authManager = new AuthManager();
+            roleManager = new RoleManager();
+        } catch (Exception e) {
+            // Firebase not available — show the layout but disable login
+            buttonLogin.setEnabled(false);
+            Toast.makeText(this, "App configuration error", Toast.LENGTH_LONG).show();
+        }
+
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,10 +94,12 @@ public class LoginPage extends AppCompatActivity {
                 buttonLogin.setEnabled(true);
                 Intent intent = new Intent(LoginPage.this, HomeActivity.class);
                 intent.putExtra(EXTRA_IS_ADMIN, isAdmin);
-                intent.putExtra("USER_NAME", user);
                 intent.putExtra("UID", uid);
-                startActivity(intent);
-                finish(); // drop LoginPage from the back stack
+                roleManager.fetchUsername(uid, username -> {
+                    intent.putExtra("USER_NAME", username != null ? username : user);
+                    startActivity(intent);
+                    finish();
+                });
             }
 
             @Override
