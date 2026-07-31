@@ -59,6 +59,7 @@ public class ArtifactDetailFragment extends Fragment {
         commentAdapter.setUserContext(uid, artifact.getLotNumber(), commentManager);
 
         wireSort(view);
+        wireBack(view);
 
         commentManager.startLive(artifact.getLotNumber(), new CommentManager.CommentCallback() {
             @Override
@@ -74,6 +75,10 @@ public class ArtifactDetailFragment extends Fragment {
 
         wireComposer(view);
         return view;
+    }
+
+    private void wireBack(View view) {
+        view.findViewById(R.id.buttonBackDetail).setOnClickListener(v -> getParentFragmentManager().popBackStack());
     }
 
     private void wireSort(View view) {

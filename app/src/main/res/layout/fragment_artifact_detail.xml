@@ -3,11 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/parchment"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
     tools:context=".ArtifactDetailFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        
+        <ImageButton
+            android:id="@+id/buttonBackDetail"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:padding="10dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/ink" />
+
+        <TextView
+            android:id="@+id/textArtifactName"
+            style="@style/TextAppearance.TAAM.Title"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Artifact Name" />
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -20,13 +48,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-
-            <TextView
-                android:id="@+id/textArtifactName"
-                style="@style/TextAppearance.TAAM.Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Artifact Name" />
 
             <TextView
                 android:id="@+id/textLotNumber"
