@@ -2,7 +2,6 @@ package com.example.b07taam2026;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -43,20 +42,10 @@ public class SignUpPage extends AppCompatActivity {
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
                 .getReference("users");
 
-        buttonCreateAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleSignUp();
-            }
-        });
+        buttonCreateAccount.setOnClickListener(v -> handleSignUp());
 
         // login page
-        buttonGoToLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        buttonGoToLogin.setOnClickListener(v -> finish());
     }
 
     // validate and create Firebase Auth account
@@ -112,7 +101,6 @@ public class SignUpPage extends AppCompatActivity {
                 return;
             }
             // go to home after signing in
-            // wipes login/signup off the back stack.
             Toast.makeText(this, "Account created!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, HomeActivity.class);
             intent.putExtra(LoginPage.EXTRA_IS_ADMIN, false);
