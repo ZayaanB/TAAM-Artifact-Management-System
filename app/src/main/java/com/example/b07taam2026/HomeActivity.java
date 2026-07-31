@@ -32,6 +32,8 @@ public class HomeActivity extends AppCompatActivity {
     private ArtifactAdapter adapter;
     private ArtifactManager manager;
     private TextView textNoMatches;
+    private FloatingActionButton adminMenuBtn;
+    private ExtendedFloatingActionButton manageAdminsBtn, manageArtifactsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +46,9 @@ public class HomeActivity extends AppCompatActivity {
 
         textNoMatches = findViewById(R.id.textNoMatches);
 
-        FloatingActionButton adminMenuBtn = findViewById(R.id.adminMenuBtn);
-        ExtendedFloatingActionButton manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
-        ExtendedFloatingActionButton manageArtifactsBtn = findViewById(R.id.adminManageArtifactsBtn);
+        adminMenuBtn = findViewById(R.id.adminMenuBtn);
+        manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
+        manageArtifactsBtn = findViewById(R.id.adminManageArtifactsBtn);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -65,11 +67,7 @@ public class HomeActivity extends AppCompatActivity {
                 isAdminMenuOpen = true;
             }
             else{ // if menu is open close it
-                manageAdminsBtn.setVisibility(View.GONE);
-                manageArtifactsBtn.setVisibility(View.GONE);
-
-                adminMenuBtn.setImageResource(R.drawable.ic_add);
-                isAdminMenuOpen = false;
+                collapseAdminMenu();
             }
         });
         manageArtifactsBtn.setOnClickListener(v -> {
@@ -138,6 +136,27 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this::syncAdminFAB);
+        syncAdminFAB();
+    }
+
+    private void syncAdminFAB() {
+        boolean artifactDetailOpen = getSupportFragmentManager().getBackStackEntryCount() > 0;
+
+        if (artifactDetailOpen) {
+            collapseAdminMenu();
+            adminMenuBtn.setVisibility(View.GONE);
+        } else {
+            adminMenuBtn.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void collapseAdminMenu() {
+        manageAdminsBtn.setVisibility(View.GONE);
+        manageArtifactsBtn.setVisibility(View.GONE);
+        adminMenuBtn.setImageResource(R.drawable.ic_add);
+        isAdminMenuOpen = false;
     }
 
     private void showArtifactDetail(Artifact artifact) {
