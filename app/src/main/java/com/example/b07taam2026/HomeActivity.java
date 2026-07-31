@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
@@ -32,19 +33,23 @@ public class HomeActivity extends AppCompatActivity {
     private ArtifactAdapter adapter;
     private ArtifactManager manager;
     private TextView textNoMatches;
+    private FloatingActionButton adminMenuBtn;
+    private ExtendedFloatingActionButton manageAdminsBtn, manageArtifactsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         isAdmin = getIntent().getBooleanExtra(LoginPage.EXTRA_IS_ADMIN, false);
+        username = getIntent().getStringExtra("USER_NAME");
+        uid = getIntent().getStringExtra("UID");
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
         textNoMatches = findViewById(R.id.textNoMatches);
 
-        FloatingActionButton adminMenuBtn = findViewById(R.id.adminMenuBtn);
-        ExtendedFloatingActionButton manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
-        ExtendedFloatingActionButton manageArtifactsBtn = findViewById(R.id.adminManageArtifactsBtn);
+        adminMenuBtn = findViewById(R.id.adminMenuBtn);
+        manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
+        manageArtifactsBtn = findViewById(R.id.adminManageArtifactsBtn);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -63,11 +68,7 @@ public class HomeActivity extends AppCompatActivity {
                 isAdminMenuOpen = true;
             }
             else{ // if menu is open close it
-                manageAdminsBtn.setVisibility(View.GONE);
-                manageArtifactsBtn.setVisibility(View.GONE);
-
-                adminMenuBtn.setImageResource(R.drawable.ic_add);
-                isAdminMenuOpen = false;
+                collapseAdminMenu();
             }
         });
         manageArtifactsBtn.setOnClickListener(v -> {
@@ -75,10 +76,23 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
             startActivity(intent);
         });
+        manageAdminsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, UserDebugActivity.class);
+            startActivity(intent);
+        });
+
+        manageAdminsBtn.setOnClickListener(v ->{
+            Intent intent = new Intent(HomeActivity.this, ManageAdminsActivity.class /* This class does not exist yet*/);
+            intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
+            intent.putExtra("USER_NAME", username);
+            intent.putExtra("UID", uid);
+            startActivity(intent);
+        });
 
         RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ArtifactAdapter(new ArrayList<>());
+        adapter.setOnReadMoreClickListener(this::showArtifactDetail);
         recyclerView.setAdapter(adapter);
 
         manager = new ArtifactManager();
@@ -111,6 +125,50 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
         });
+        android.widget.Button buttonLogout = findViewById(R.id.buttonLogout);
+        AuthManager authManager = new AuthManager();
+        buttonLogout.setOnClickListener(v -> {
+            if(manager != null){ //for DB listener, no more loadfail message.
+                manager.stopLive();
+            }
+            authManager.logout();
+            Intent intent = new Intent(HomeActivity.this, LoginPage.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this::syncAdminFAB);
+        syncAdminFAB();
+    }
+
+    private void syncAdminFAB() {
+        boolean artifactDetailOpen = getSupportFragmentManager().getBackStackEntryCount() > 0;
+
+        if (artifactDetailOpen) {
+            collapseAdminMenu();
+            adminMenuBtn.setVisibility(View.GONE);
+        } else {
+            adminMenuBtn.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void collapseAdminMenu() {
+        manageAdminsBtn.setVisibility(View.GONE);
+        manageArtifactsBtn.setVisibility(View.GONE);
+        adminMenuBtn.setImageResource(R.drawable.ic_add);
+        isAdminMenuOpen = false;
+    }
+
+    private void showArtifactDetail(Artifact artifact) {
+        String username = getIntent().getStringExtra("USER_NAME");
+        String uid = getIntent().getStringExtra("UID");
+        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact, username, uid);
+        getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

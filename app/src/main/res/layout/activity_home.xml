@@ -15,11 +15,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="8dp"
         app:iconifiedByDefault="false"
         app:queryHint="@string/search_hint"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonLogout"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -63,21 +63,30 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/adminManageAdminsBtn"
+    <Button
+        android:id="@+id/buttonLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:text="Logout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
+  
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/adminManageAdminsBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/manage_items"
         android:textColor="@color/white"
         app:backgroundTint="@color/cinnabar"
         app:iconTint="@color/white"
         app:icon="@drawable/ic_add"
         android:visibility="gone"
-        android:text="Manage Admins"
+        android:text="@string/button_manage_admins"
         app:layout_constraintBottom_toTopOf="@+id/adminManageArtifactsBtn"
         app:layout_constraintEnd_toEndOf="@+id/adminManageArtifactsBtn"
-        app:layout_constraintStart_toStartOf="@+id/adminManageArtifactsBtn"/>
+        app:layout_constraintStart_toStartOf="@+id/adminManageArtifactsBtn" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/adminManageArtifactsBtn"
@@ -90,26 +99,16 @@
         app:iconTint="@color/white"
         app:icon="@drawable/ic_add"
         android:visibility="gone"
-        android:text="Manage Artifacts"
+        android:text="@string/button_manage_artefacts"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
-    <!--    <TextView-->
-<!--        android:id="@+id/textEmpty"-->
-<!--        style="@style/TextAppearance.TAAM.Secondary"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="32dp"-->
-<!--        android:layout_marginEnd="32dp"-->
-<!--        android:gravity="center"-->
-<!--        android:text="@string/empty_no_artifacts"-->
-<!--        android:visibility="gone"-->
-<!--        app:layout_constraintBottom_toBottomOf="@id/artifactRecyclerView"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="1.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="@id/artifactRecyclerView"-->
-<!--        app:layout_constraintVertical_bias="1.0"-->
-<!--        tools:visibility="visible" />-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,10 @@ public class RoleManager {
         void onError(String errorMessage);
     }
 
+    public interface UsernameCallback {
+        void onResult(String username);
+    }
+
     public void isAdmin(String uid, RoleCallback callback) {
         if (uid == null) {
             callback.onError("No user is signed in");
@@ -45,6 +49,21 @@ public class RoleManager {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         callback.onError(error.getMessage());
+                    }
+                });
+    }
+
+    public void fetchUsername(String uid, UsernameCallback callback) {
+        if (uid == null) { callback.onResult(null); return; }
+        usersRef.child(uid).child("username")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        callback.onResult(snapshot.getValue(String.class));
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onResult(null);
                     }
                 });
     }

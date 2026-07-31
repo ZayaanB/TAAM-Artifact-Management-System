@@ -3,11 +3,13 @@ package com.example.b07taam2026;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -27,10 +29,23 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     private final String uid = new AuthManager().getCurrentUid();
     private final Map<String, Long> likeCounts = new HashMap<>();
     private final Set<String> likedByMe = new HashSet<>();
+    private final SaveManager saveManager = new SaveManager();
+    private final Set<String> savedByMe = new HashSet<>();
     private String query = "";
+
+    @Nullable
+    private OnReadMoreClickListener readMoreListener;
+
+    public interface OnReadMoreClickListener {
+        void onReadMore(Artifact artifact);
+    }
 
     public ArtifactAdapter(List<Artifact> artifacts) {
         filter.submit(artifacts);
+    }
+
+    public void setOnReadMoreClickListener(OnReadMoreClickListener listener) {
+        this.readMoreListener = listener;
     }
 
     @NonNull
@@ -43,7 +58,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
 
     @Override
     public void onBindViewHolder(@NonNull ArtifactViewHolder holder, int position) {
-        holder.bind(filter.get(position));
+        holder.bind(filter.get(position), readMoreListener);
     }
 
     @Override
@@ -52,11 +67,19 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+
         likeManager.startLive(uid, (counts, mine) -> {
             likeCounts.clear();
             likeCounts.putAll(counts);
             likedByMe.clear();
             likedByMe.addAll(mine);
+            notifyDataSetChanged();
+
+        });
+
+        saveManager.startLive(uid, saved -> {
+            savedByMe.clear();
+            savedByMe.addAll(saved);
             notifyDataSetChanged();
         });
     }
@@ -65,6 +88,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         likeManager.stopLive();
+        saveManager.stopLive();
     }
 
     public void submitList(List<Artifact> artifacts) { filter.submit(artifacts); }
@@ -92,10 +116,11 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         private final TextView textCategory;
         private final TextView textMaterial;
         private final TextView textDynastyPeriod;
-        private final TextView textDescription;
         private final ImageButton buttonLike;
+        private final ImageButton buttonSave;
         private final TextView textLikeCount;
         private final ImageView imageArtifact;
+        private final Button buttonReadMore;
 
         ArtifactViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -104,19 +129,19 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             textCategory = itemView.findViewById(R.id.textCategory);
             textMaterial = itemView.findViewById(R.id.textMaterial);
             textDynastyPeriod = itemView.findViewById(R.id.textDynastyPeriod);
-            textDescription = itemView.findViewById(R.id.textDescription);
             buttonLike = itemView.findViewById(R.id.buttonLike);
+            buttonSave = itemView.findViewById(R.id.buttonSave);
             textLikeCount = itemView.findViewById(R.id.textLikeCount);
             imageArtifact = itemView.findViewById(R.id.imageArtifact);
+            buttonReadMore = itemView.findViewById(R.id.buttonReadMore);
         }
 
-        void bind(Artifact artifact) {
+        void bind(Artifact artifact, @Nullable OnReadMoreClickListener listener) {
             textName.setText(artifact.getName());
             textLotNumber.setText("Lot Number: " + artifact.getLotNumber());
             textCategory.setText("Category: " + artifact.getCategory());
             textMaterial.setText("Material: " + artifact.getMaterial());
             textDynastyPeriod.setText("Dynasty Period: " + artifact.getDynasty());
-            textDescription.setText(artifact.getDescription());
 
             String url = artifact.getImageUrl();
 
@@ -140,6 +165,20 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
                     : R.drawable.ic_heart_outline);
             buttonLike.setOnClickListener(v -> {
                 if (uid != null) likeManager.setLike(lot, uid, !liked);
+            });
+
+            boolean saved = savedByMe.contains(lot);
+            buttonSave.setImageResource(saved
+                    ? R.drawable.ic_bookmark_filled
+                    : R.drawable.ic_bookmark_outline);
+            buttonSave.setOnClickListener(v -> {
+                if (uid != null) saveManager.setSaved(lot, uid, !saved);
+            });
+
+            buttonReadMore.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onReadMore(artifact);
+                }
             });
         }
     }

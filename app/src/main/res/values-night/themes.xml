@@ -1,7 +1,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme for dark mode. -->
     <style name="Base.Theme.B07DemoSummer2024" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/cinnabar</item>
+        <item name="colorPrimaryVariant">@color/cinnabar_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/antique_gold</item>
+        <item name="colorOnSecondary">@color/ink</item>
+        <item name="android:colorBackground">@color/ink</item>
+        <item name="colorSurface">@color/ink</item>
+        <item name="colorOnSurface">@color/silk</item>
+        <item name="colorOnBackground">@color/silk</item>
     </style>
+
+    <style name="Theme.B07DemoSummer2024" parent="Base.Theme.B07DemoSummer2024" />
 </resources>
