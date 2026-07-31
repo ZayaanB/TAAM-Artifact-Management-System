@@ -29,13 +29,15 @@
     <string name="search_hint">Search Artifact</string>
     <string name="empty_no_artifacts">No matches</string>
     <string name="artifact_image_desc">Artifact Image</string>
+    <string name="button_manage_artefacts">Manage Artefacts</string>
+    <string name="button_manage_admins">Manage Admins</string>
 
     <!-- Manage Artifacts Page -->
     <string name="manage_artifacts_title">Manage Artifacts</string>
     <string name="section_add_artifact">Add Artifact</string>
     <string name="section_edit_delete">Edit/Delete Artifacts</string>
     <string name="section_edit_artifact">Edit Artifact</string>
-    
+
     <!-- Artifact Fields -->
     <string name="hint_lot_number">Lot Number *</string>
     <string name="hint_artifact_name">Name *</string>
@@ -77,6 +79,17 @@
     <string name="toast_artifact_deleted">Artifact deleted</string>
     <string name="toast_fill_required">Please fill out all required fields</string>
     <string name="editing_banner">Editing artifact — lot number cannot be changed</string>
+
+    <!-- Manage Admins Page -->
+    <string name="manage_admins_title">Manage Admins</string>
+    <string name="action_add_admin">Add Admin</string>
+    <string name="section_add_admin">Add Admin</string>
+    <string name="section_remove_admin">Remove Admin</string>
+    <string name="empty_no_admins">No Admins Found</string>
+
+    <!-- Admin Fields -->
+    <string name="hint_search_admin">Search Admin</string>
+
 
     <string-array name="categories_array">
         <item>Books</item>
