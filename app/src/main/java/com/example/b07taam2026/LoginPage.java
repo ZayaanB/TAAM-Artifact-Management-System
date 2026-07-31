@@ -2,7 +2,6 @@ package com.example.b07taam2026;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -10,7 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginPage extends AppCompatActivity {
-    // key for isAdmin boolean passed to MainActivity
+    // key for isAdmin boolean passed to HomeActivity
     public static final String EXTRA_IS_ADMIN = "isAdmin";
 
     private EditText editUser, editPass; 
@@ -36,29 +35,13 @@ public class LoginPage extends AppCompatActivity {
         buttonSignUp = findViewById(R.id.buttonSignUp);
 
         // firebase helpers (Ryan's backend classes)
-        try {
-            authManager = new AuthManager();
-            roleManager = new RoleManager();
-        } catch (Exception e) {
-            // Firebase not available — show the layout but disable login
-            buttonLogin.setEnabled(false);
-            Toast.makeText(this, "App configuration error", Toast.LENGTH_LONG).show();
-        }
-
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleLogin();
-            }
-        });
+        authManager = new AuthManager();
+        roleManager = new RoleManager();
+        
+        buttonLogin.setOnClickListener(v -> handleLogin());
 
         // open the sign-up screen
-        buttonSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginPage.this, SignUpPage.class));
-            }
-        });
+        buttonSignUp.setOnClickListener(v -> startActivity(new Intent(LoginPage.this, SignUpPage.class)));
     }
 
     // validate input and attempt Firebase sign in
@@ -86,7 +69,7 @@ public class LoginPage extends AppCompatActivity {
         });
     }
 
-    // read users/{uid}/role from the DB hand off to MainActivity with the admin flag
+    // read user role and switch to main page
     private void checkRoleAndProceed(String uid) {
         roleManager.isAdmin(uid, new RoleManager.RoleCallback() {
             @Override

@@ -129,6 +129,7 @@ public class SupabaseImageUploader {
         });
     }
 
+    // delete image by public url
     public void deleteImage(String publicUrl) {
         if (isBlank(publicUrl)) {
             return;
