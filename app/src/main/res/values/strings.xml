@@ -32,6 +32,11 @@
     <string name="button_manage_artefacts">Manage Artifacts</string>
     <string name="button_manage_admins">Manage Admins</string>
 
+    <!-- Home Menu -->
+    <string name="menu_open">Open menu</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_logout">Logout</string>
+
     <!-- Manage Artifacts Page -->
     <string name="manage_artifacts_title">Manage Artifacts</string>
     <string name="section_add_artifact">Add Artifact</string>
