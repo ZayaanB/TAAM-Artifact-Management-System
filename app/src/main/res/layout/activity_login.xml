@@ -48,13 +48,13 @@
 
     <CheckBox
         android:id="@+id/checkKeepSignedIn"
-        style="@style/Widget.TAAM.EditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginTop="8dp"
-        android:text="Keep me signed in" />
-    
+        android:text="Keep me signed in"
+        android:textColor="@color/ink" />
+
     <Button
         android:id="@+id/buttonLogin"
         style="@style/Widget.TAAM.Button.Primary"
