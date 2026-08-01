@@ -35,9 +35,10 @@
     </style>
 
     <!-- Form fields -->
-    <style name="Widget.TAAM.EditText" parent="Widget.Material3.TextInputEditText.FilledBox">
+    <style name="Widget.TAAM.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:textColor">@color/ink</item>
         <item name="android:textColorHint">@color/muted_taupe</item>
+        <item name="android:backgroundTint">@color/muted_taupe</item>
     </style>
 
     <!-- Search bars -->

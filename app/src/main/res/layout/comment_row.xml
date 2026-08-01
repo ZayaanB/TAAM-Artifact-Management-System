@@ -50,7 +50,7 @@
             android:layout_marginTop="4dp"
             tools:text="Comment text goes here" />
 
-        <!-- Action bar: Like | Dislike | Reply -->
+        <!-- Action bar: Like | Reply -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,26 +78,6 @@
                 android:minWidth="16dp"
                 android:textSize="12sp"
                 tools:text="3" />
-
-            <!-- Dislike -->
-            <ImageButton
-                android:id="@+id/buttonDislike"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"
-                android:src="@drawable/ic_thumbs_down"
-                app:tint="@color/muted_taupe"
-                android:contentDescription="Dislike" />
-
-            <TextView
-                android:id="@+id/textDislikeCount"
-                style="@style/TextAppearance.TAAM.Secondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="16dp"
-                android:textSize="12sp"
-                tools:text="1" />
 
             <View
                 android:layout_width="0dp"

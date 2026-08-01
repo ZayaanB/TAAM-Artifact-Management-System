@@ -42,6 +42,11 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     // prevent editing lot number
     private String editingLot = null;
 
+    // image url when edit started
+    private String editingOriginalImageUrl = null;
+    // image uploaded but unsaved
+    private String sessionUploadedUrl = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,6 +149,8 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
             public void onSuccess(String publicUrl) {
                 buttonUploadImage.setEnabled(true);
                 buttonUploadImage.setText(R.string.action_upload_image);
+                discardUnsavedUpload();
+                sessionUploadedUrl = publicUrl;
                 editImageUrl.setText(publicUrl);
                 Toast.makeText(ManageArtifactsActivity.this, R.string.toast_image_uploaded, Toast.LENGTH_SHORT).show();
             }
@@ -171,10 +178,12 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
 
         if (editingLot == null) {
             buttonSubmit.setEnabled(false);
-            manager.addArtifact(lot, buildArtifactFromForm(), new ArtifactManager.WriteCallback() {
+            Artifact artifact = buildArtifactFromForm();
+            manager.addArtifact(lot, artifact, new ArtifactManager.WriteCallback() {
                 @Override
                 public void onSuccess() {
                     buttonSubmit.setEnabled(true);
+                    finishUploadTracking(artifact.getImageUrl());
                     Toast.makeText(ManageArtifactsActivity.this, R.string.toast_artifact_added, Toast.LENGTH_SHORT).show();
                     clearForm();
                 }
@@ -188,10 +197,16 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         }
         else {
             buttonSubmit.setEnabled(false);
-            manager.updateArtifact(editingLot, buildArtifactFromForm(), new ArtifactManager.WriteCallback() {
+            Artifact artifact = buildArtifactFromForm();
+            manager.updateArtifact(editingLot, artifact, new ArtifactManager.WriteCallback() {
                 @Override
                 public void onSuccess() {
                     buttonSubmit.setEnabled(true);
+                    finishUploadTracking(artifact.getImageUrl());
+                    // old image was replaced
+                    if (editingOriginalImageUrl != null && !editingOriginalImageUrl.equals(artifact.getImageUrl())) {
+                        imageUploader.deleteImage(editingOriginalImageUrl);
+                    }
                     Toast.makeText(ManageArtifactsActivity.this, R.string.toast_artifact_updated, Toast.LENGTH_SHORT).show();
                     exitEditMode();
                 }
@@ -233,7 +248,9 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     // prefill form, lock the lot number
     @Override
     public void onEditClicked(Artifact artifact) {
+        discardUnsavedUpload();
         editingLot = artifact.getLotNumber();
+        editingOriginalImageUrl = artifact.getImageUrl();
 
         editLot.setText(artifact.getLotNumber());
         editName.setText(artifact.getName());
@@ -289,7 +306,9 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
 
     // clear add form
     private void exitEditMode() {
+        discardUnsavedUpload();
         editingLot = null;
+        editingOriginalImageUrl = null;
         clearForm();
         editLot.setEnabled(true);
         textFormTitle.setText(R.string.section_add_artifact);
@@ -309,6 +328,22 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         editLot.requestFocus();
     }
 
+    // delete unsaved upload
+    private void discardUnsavedUpload() {
+        if (sessionUploadedUrl != null) {
+            imageUploader.deleteImage(sessionUploadedUrl);
+            sessionUploadedUrl = null;
+        }
+    }
+
+    // delete url unsaved
+    private void finishUploadTracking(String savedUrl) {
+        if (sessionUploadedUrl != null && !sessionUploadedUrl.equals(savedUrl)) {
+            imageUploader.deleteImage(sessionUploadedUrl);
+        }
+        sessionUploadedUrl = null;
+    }
+
     private void updateEmptyText() {
         textNoMatches.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
@@ -316,6 +351,9 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (isFinishing()) {
+            discardUnsavedUpload();
+        }
         if (manager != null) {
             manager.stopLive();
         }

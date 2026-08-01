@@ -29,7 +29,7 @@
     <string name="search_hint">Search Artifact</string>
     <string name="empty_no_artifacts">No matches</string>
     <string name="artifact_image_desc">Artifact Image</string>
-    <string name="button_manage_artefacts">Manage Artefacts</string>
+    <string name="button_manage_artefacts">Manage Artifacts</string>
     <string name="button_manage_admins">Manage Admins</string>
 
     <!-- Manage Artifacts Page -->
