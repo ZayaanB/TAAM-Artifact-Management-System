@@ -83,8 +83,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     class CommentViewHolder extends RecyclerView.ViewHolder {
         final TextView textAuthor, textTime, textBody;
-        final ImageButton buttonLike, buttonDislike;
-        final TextView textLikeCount, textDislikeCount;
+        final ImageButton buttonLike;
+        final TextView textLikeCount;
         final Button buttonReply, buttonSubmitReply;
         final EditText editReplyText;
         final LinearLayout layoutReplyInput, layoutReplies;
@@ -95,9 +95,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             textTime = itemView.findViewById(R.id.textCommentTime);
             textBody = itemView.findViewById(R.id.textCommentText);
             buttonLike = itemView.findViewById(R.id.buttonLike);
-            buttonDislike = itemView.findViewById(R.id.buttonDislike);
             textLikeCount = itemView.findViewById(R.id.textLikeCount);
-            textDislikeCount = itemView.findViewById(R.id.textDislikeCount);
             buttonReply = itemView.findViewById(R.id.buttonReply);
             layoutReplyInput = itemView.findViewById(R.id.layoutReplyInput);
             editReplyText = itemView.findViewById(R.id.editReplyText);
@@ -120,18 +118,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             buttonLike.setOnClickListener(v -> {
                 if (commentManager != null && uid != null && lotNumber != null)
                     commentManager.toggleLike(lotNumber, comment.getId(), uid, liked);
-            });
-
-            // Dislike button
-            boolean disliked = comment.isDislikedBy(uid);
-            buttonDislike.setImageResource(disliked ? R.drawable.ic_thumbs_down : R.drawable.ic_thumbs_down);
-            buttonDislike.getDrawable().setTint(ContextCompat.getColor(itemView.getContext(),
-                    disliked ? R.color.cinnabar : R.color.muted_taupe));
-            textDislikeCount.setText(String.valueOf(comment.getDislikeCount()));
-            textDislikeCount.setVisibility(comment.getDislikeCount() > 0 ? View.VISIBLE : View.INVISIBLE);
-            buttonDislike.setOnClickListener(v -> {
-                if (commentManager != null && uid != null && lotNumber != null)
-                    commentManager.toggleDislike(lotNumber, comment.getId(), uid, disliked);
             });
 
             // Reply toggle
@@ -168,7 +154,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                             .setText(entry.getValue().getText());
 
                     replyView.findViewById(R.id.buttonLike).setVisibility(View.GONE);
-                    replyView.findViewById(R.id.buttonDislike).setVisibility(View.GONE);
                     replyView.findViewById(R.id.buttonReply).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplyInput).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplies).setVisibility(View.GONE);
