@@ -62,32 +62,29 @@ public class ArtifactManager {
 
     // remove artifact and all fields
     public void deleteArtifact(String lotNumber, WriteCallback callback) {
-        rootRef.child("users").get()
-                .addOnSuccessListener(snapshot -> {
-                    Map<String, Object> updates = baseDeleteUpdates(lotNumber);
-                    for (DataSnapshot user : snapshot.getChildren()) {
-                        if (user.child("saved").hasChild(lotNumber)) {
-                            updates.put("users/" + user.getKey() + "/saved/" + lotNumber, null);
-                        }
-                    }
-                    applyDelete(updates, callback);
-                })
-                .addOnFailureListener(e -> applyDelete(baseDeleteUpdates(lotNumber), callback));
-    }
-
-    // path removed on delete
-    private Map<String, Object> baseDeleteUpdates(String lotNumber) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("artifacts/" + lotNumber, null);
         updates.put("likes/" + lotNumber, null);
         updates.put("comments/" + lotNumber, null);
-        return updates;
+        rootRef.updateChildren(updates)
+                .addOnSuccessListener(unused -> {
+                    cleanupSaved(lotNumber);
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
-    private void applyDelete(Map<String, Object> updates, WriteCallback callback) {
-        rootRef.updateChildren(updates)
-                .addOnSuccessListener(unused -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    // remove saved artifacts from all users
+    private void cleanupSaved(String lotNumber) {
+        rootRef.child("users").get()
+                .addOnSuccessListener(snapshot -> {
+                    for (DataSnapshot user : snapshot.getChildren()) {
+                        if (user.child("saved").hasChild(lotNumber)) {
+                            rootRef.child("users").child(user.getKey())
+                                    .child("saved").child(lotNumber).removeValue();
+                        }
+                    }
+                });
     }
 
     //artifacts changes cause updates
