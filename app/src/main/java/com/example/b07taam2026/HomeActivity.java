@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageButton;
+import androidx.appcompat.widget.PopupMenu;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
@@ -125,18 +126,23 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
         });
-        android.widget.Button buttonLogout = findViewById(R.id.buttonLogout);
-        AuthManager authManager = new AuthManager();
-        buttonLogout.setOnClickListener(v -> {
-            if(manager != null){ //for DB listener, no more loadfail message.
-                manager.stopLive();
-            }
-            authManager.logout();
-            getSharedPreferences("LoginPrefs", MODE_PRIVATE).edit().putBoolean("keepLoggedIn", false).apply(); //When user logs out, remember login gets reset
-            Intent intent = new Intent(HomeActivity.this, LoginPage.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+        ImageButton buttonMenu = findViewById(R.id.buttonMenu);
+        buttonMenu.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(HomeActivity.this, v);
+            popup.getMenuInflater().inflate(R.layout.home_dropdown_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
+                if (id == R.id.menuProfile) {
+                    // Yet to do
+                    logout();
+                    return true;
+                } else if (id == R.id.menuLogout) {
+                    logout();
+                    return true;
+                }
+                return false;
+            });
+            popup.show();
         });
 
         getSupportFragmentManager().addOnBackStackChangedListener(this::syncAdminFAB);
@@ -159,6 +165,20 @@ public class HomeActivity extends AppCompatActivity {
         manageArtifactsBtn.setVisibility(View.GONE);
         adminMenuBtn.setImageResource(R.drawable.ic_add);
         isAdminMenuOpen = false;
+    }
+
+    private void logout() {
+        if (manager != null) {
+            manager.stopLive();
+        }
+        new AuthManager().logout();
+        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .edit().putBoolean("keepLoggedIn", false).apply();
+
+        Intent intent = new Intent(HomeActivity.this, LoginPage.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void showArtifactDetail(Artifact artifact) {
