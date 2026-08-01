@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +113,20 @@ public class ArtifactDetailFragment extends Fragment {
         ((TextView) view.findViewById(R.id.textMaterial)).setText("Material: " + artifact.getMaterial());
         ((TextView) view.findViewById(R.id.textDynastyPeriod)).setText("Dynasty Period: " + artifact.getDynasty());
         ((TextView) view.findViewById(R.id.textDescription)).setText(artifact.getDescription());
+
+        ImageView image = view.findViewById(R.id.imageArtifactDetail);
+        String url = artifact.getImageUrl();
+        if (url != null && !url.isEmpty()) {
+            Glide.with(image.getContext())
+                    .load(url)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(image);
+        }
+        else {
+            image.setImageResource(R.drawable.ic_launcher_foreground);
+        }
     }
 
     private void wireComposer(View view) {
