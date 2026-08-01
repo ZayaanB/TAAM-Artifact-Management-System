@@ -87,4 +87,13 @@ public class CommentManager {
         if (key == null) return;
         repliesRef.child(key).setValue(new Comment(key, author, text, System.currentTimeMillis()));
     }
+
+    // admin comment management
+    public void deleteComment(String lotNumber, String commentId) {
+        commentsRef.child(lotNumber).child(commentId).removeValue();
+    }
+
+    public void deleteReply(String lotNumber, String commentId, String replyId) {
+        commentsRef.child(lotNumber).child(commentId).child("replies").child(replyId).removeValue();
+    }
 }

@@ -24,18 +24,20 @@ public class ArtifactDetailFragment extends Fragment {
     private static final String ARG_ARTIFACT = "artifact";
     private static final String ARG_USERNAME = "username";
     private static final String ARG_UID = "uid";
+    private static final String ARG_IS_ADMIN = "isAdmin";
 
     private CommentManager commentManager;
     private CommentAdapter commentAdapter;
     private final List<Comment> comments = new ArrayList<>();
     private Button buttonSortNewest, buttonSortOldest;
 
-    public static ArtifactDetailFragment newInstance(Artifact artifact, String username, String uid) {
+    public static ArtifactDetailFragment newInstance(Artifact artifact, String username, String uid, boolean isAdmin) {
         ArtifactDetailFragment fragment = new ArtifactDetailFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_ARTIFACT, artifact);
         args.putString(ARG_USERNAME, username);
         args.putString(ARG_UID, uid);
+        args.putBoolean(ARG_IS_ADMIN, isAdmin);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,6 +50,7 @@ public class ArtifactDetailFragment extends Fragment {
 
         Artifact artifact = (Artifact) requireArguments().getSerializable(ARG_ARTIFACT);
         String uid = requireArguments().getString(ARG_UID);
+        boolean isAdmin = requireArguments().getBoolean(ARG_IS_ADMIN, false);
         bindArtifact(view, artifact);
 
         RecyclerView commentsView = view.findViewById(R.id.commentsRecyclerView);
@@ -56,7 +59,7 @@ public class ArtifactDetailFragment extends Fragment {
         commentsView.setAdapter(commentAdapter);
 
         commentManager = new CommentManager();
-        commentAdapter.setUserContext(uid, artifact.getLotNumber(), commentManager);
+        commentAdapter.setUserContext(uid, artifact.getLotNumber(), commentManager, isAdmin);
 
         wireSort(view);
         wireBack(view);

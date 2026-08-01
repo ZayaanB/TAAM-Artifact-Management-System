@@ -9,18 +9,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ArtifactManager {
+    private final DatabaseReference rootRef;
     private final DatabaseReference artifactsRef;
-    private final DatabaseReference likesRef;
     private ValueEventListener liveListener;
 
     public ArtifactManager() {
         FirebaseDatabase database = FirebaseDatabase
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com");
+        rootRef = database.getReference();
         artifactsRef = database.getReference("artifacts");
-        likesRef = database.getReference("likes");
     }
 
     // how artifact list results get reported back to the caller
@@ -58,13 +60,33 @@ public class ArtifactManager {
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
-    // remove artifact and its likes
+    // remove artifact and all fields
     public void deleteArtifact(String lotNumber, WriteCallback callback) {
-        artifactsRef.child(lotNumber).removeValue()
-                .addOnSuccessListener(unused -> {
-                    likesRef.child(lotNumber).removeValue();
-                    callback.onSuccess();
+        rootRef.child("users").get()
+                .addOnSuccessListener(snapshot -> {
+                    Map<String, Object> updates = baseDeleteUpdates(lotNumber);
+                    for (DataSnapshot user : snapshot.getChildren()) {
+                        if (user.child("saved").hasChild(lotNumber)) {
+                            updates.put("users/" + user.getKey() + "/saved/" + lotNumber, null);
+                        }
+                    }
+                    applyDelete(updates, callback);
                 })
+                .addOnFailureListener(e -> applyDelete(baseDeleteUpdates(lotNumber), callback));
+    }
+
+    // path removed on delete
+    private Map<String, Object> baseDeleteUpdates(String lotNumber) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("artifacts/" + lotNumber, null);
+        updates.put("likes/" + lotNumber, null);
+        updates.put("comments/" + lotNumber, null);
+        return updates;
+    }
+
+    private void applyDelete(Map<String, Object> updates, WriteCallback callback) {
+        rootRef.updateChildren(updates)
+                .addOnSuccessListener(unused -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
