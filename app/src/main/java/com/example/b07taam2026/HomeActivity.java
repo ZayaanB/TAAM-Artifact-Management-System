@@ -132,6 +132,7 @@ public class HomeActivity extends AppCompatActivity {
                 manager.stopLive();
             }
             authManager.logout();
+            getSharedPreferences("LoginPrefs", MODE_PRIVATE).edit().putBoolean("keepLoggedIn", false).apply(); //When user logs out, remember login gets reset
             Intent intent = new Intent(HomeActivity.this, LoginPage.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
