@@ -90,13 +90,14 @@ public class SignUpPage extends AppCompatActivity {
                         Toast.makeText(this, "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    saveProfile(firebaseUser.getUid(), username);
+                    saveProfile(firebaseUser.getUid(),firebaseUser.getEmail(), username);
                 });
     }
 
-    private void saveProfile(String uid, String username) {
+    private void saveProfile(String uid, String email, String username) {
         Map<String, Object> profile = new HashMap<>();
         profile.put("username", username);
+        profile.put("email", email);
         profile.put("role", "user"); // new accounts are always regular users
 
         usersRef.child(uid).updateChildren(profile).addOnCompleteListener(task -> {
