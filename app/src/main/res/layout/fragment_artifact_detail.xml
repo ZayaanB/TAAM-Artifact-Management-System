@@ -49,6 +49,16 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <ImageView
+                android:id="@+id/imageArtifactDetail"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:adjustViewBounds="true"
+                android:background="@color/border_tan"
+                android:contentDescription="@string/artifact_image_desc"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_foreground" />
+
             <TextView
                 android:id="@+id/textLotNumber"
                 style="@style/TextAppearance.TAAM.Label"

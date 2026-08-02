@@ -98,6 +98,18 @@
                 android:textAllCaps="false"
                 android:textColor="@color/muted_taupe"
                 android:textSize="13sp" />
+
+            <!-- Admin delete (hidden by default) -->
+            <ImageButton
+                android:id="@+id/buttonDeleteComment"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone"
+                app:tint="@color/muted_taupe"
+                android:contentDescription="@string/action_delete_comment" />
         </LinearLayout>
 
         <!-- Reply input (hidden by default) -->

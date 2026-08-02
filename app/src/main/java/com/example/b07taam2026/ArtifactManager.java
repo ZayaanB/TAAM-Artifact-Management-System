@@ -9,18 +9,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ArtifactManager {
+    private final DatabaseReference rootRef;
     private final DatabaseReference artifactsRef;
-    private final DatabaseReference likesRef;
     private ValueEventListener liveListener;
 
     public ArtifactManager() {
         FirebaseDatabase database = FirebaseDatabase
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com");
+        rootRef = database.getReference();
         artifactsRef = database.getReference("artifacts");
-        likesRef = database.getReference("likes");
     }
 
     // how artifact list results get reported back to the caller
@@ -58,14 +60,31 @@ public class ArtifactManager {
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
-    // remove artifact and its likes
+    // remove artifact and all fields
     public void deleteArtifact(String lotNumber, WriteCallback callback) {
-        artifactsRef.child(lotNumber).removeValue()
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("artifacts/" + lotNumber, null);
+        updates.put("likes/" + lotNumber, null);
+        updates.put("comments/" + lotNumber, null);
+        rootRef.updateChildren(updates)
                 .addOnSuccessListener(unused -> {
-                    likesRef.child(lotNumber).removeValue();
+                    cleanupSaved(lotNumber);
                     callback.onSuccess();
                 })
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    }
+
+    // remove saved artifacts from all users
+    private void cleanupSaved(String lotNumber) {
+        rootRef.child("users").get()
+                .addOnSuccessListener(snapshot -> {
+                    for (DataSnapshot user : snapshot.getChildren()) {
+                        if (user.child("saved").hasChild(lotNumber)) {
+                            rootRef.child("users").child(user.getKey())
+                                    .child("saved").child(lotNumber).removeValue();
+                        }
+                    }
+                });
     }
 
     //artifacts changes cause updates
