@@ -104,6 +104,10 @@
 
     <!-- Admin Fields -->
     <string name="hint_search_admin">Search Admin</string>
+    <string name="toast_admin_added">Admin added</string>
+    <string name="toast_admin_add_fail">Admin add failed: </string>
+    <string name="toast_admin_removed">Admin removed</string>
+    <string name="toast_admin_remove_fail">Admin remove failed: </string>
 
     <!-- Profile Page -->
     <string name="profile_title">Profile</string>
