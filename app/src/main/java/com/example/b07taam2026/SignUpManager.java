@@ -72,14 +72,15 @@ public class SignUpManager {
                     callback.onFailure("Username already taken");
                     return;
                 }
-                saveProfile(uid, username, callback);
+                saveProfile(uid, user.getEmail(), username, callback);
             }
         });
     }
 
-    private void saveProfile(String uid, String username, SignUpCallback callback) {
+    private void saveProfile(String uid, String email, String username, SignUpCallback callback) {
         Map<String, Object> profile = new HashMap<>();
         profile.put("username", username);
+        profile.put("email", email);
         profile.put("role", "user");
         usersRef.child(uid).updateChildren(profile).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
