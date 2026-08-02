@@ -1,5 +1,8 @@
 package com.example.b07taam2026;
 
+import static com.example.b07taam2026.R.layout.home_dropdown_menu;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -45,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
             R.id.menuPageSize12, R.id.menuPageSize24, R.id.menuPageSizeAll
     };
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         isAdmin = getIntent().getBooleanExtra(LoginPage.EXTRA_IS_ADMIN, false);
@@ -150,7 +154,7 @@ public class HomeActivity extends AppCompatActivity {
         ImageButton buttonMenu = findViewById(R.id.buttonMenu);
         buttonMenu.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(HomeActivity.this, v);
-            popup.getMenuInflater().inflate(R.layout.home_dropdown_menu, popup.getMenu());
+            popup.getMenuInflater().inflate(home_dropdown_menu, popup.getMenu());
 
             // tick the saved option
             popup.getMenu().findItem(PAGE_SIZE_MENU_IDS[paginationPrefs.getSelectedIndex()]).setChecked(true);
@@ -168,8 +172,11 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 if (id == R.id.menuProfile) {
-                    // Yet to do
-                    logout();
+                    Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+                    intent.putExtra("USER_NAME", username);
+                    intent.putExtra("UID", uid);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
                     return true;
                 } else if (id == R.id.menuLogout) {
                     logout();

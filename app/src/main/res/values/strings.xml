@@ -103,6 +103,14 @@
     <!-- Admin Fields -->
     <string name="hint_search_admin">Search Admin</string>
 
+    <!-- Profile Page -->
+    <string name="profile_title">Profile</string>
+    <string name="tab_likes">Likes</string>
+    <string name="tab_favourites">Favourites</string>
+    <string name="empty_no_likes">You haven\'t liked any artifacts yet</string>
+    <string name="empty_no_favourites">You haven\'t favourited any artifacts yet</string>
+  
+    <!-- Home Page -->
     <string name="page_prev">&lt; Prev</string>
     <string name="page_next">Next &gt;</string>
     <string name="page_indicator">Page %1$d of %2$d (%3$d artifacts)</string>
