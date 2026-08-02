@@ -59,14 +59,6 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_launcher_foreground" />
 
-            <TextView
-                android:id="@+id/textDescription"
-                style="@style/TextAppearance.TAAM.Body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Description" />
-
             <LinearLayout
                 android:id="@+id/detailFieldsContainer"
                 android:layout_width="match_parent"

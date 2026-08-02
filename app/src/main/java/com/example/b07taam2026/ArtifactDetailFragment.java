@@ -110,7 +110,6 @@ public class ArtifactDetailFragment extends Fragment {
 
     private void bindArtifact(View view, Artifact artifact) {
         ((TextView) view.findViewById(R.id.textArtifactName)).setText(artifact.getName());
-        ((TextView) view.findViewById(R.id.textDescription)).setText(artifact.getDescription());
 
         ImageView image = view.findViewById(R.id.imageArtifactDetail);
         String url = artifact.getImageUrl();
@@ -134,6 +133,9 @@ public class ArtifactDetailFragment extends Fragment {
         container.removeAllViews();
 
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
+
+        addHeader(inflater, container, "Description");
+        addFull(inflater, container, field(null, artifact.getDescription()));
 
         addHeader(inflater, container, "Identification");
         addPair(inflater, container,
@@ -163,7 +165,7 @@ public class ArtifactDetailFragment extends Fragment {
         addFull(inflater, container, field("Acquisition Method", artifact.getAcquisitionMethod()));
 
         addHeader(inflater, container, "Notes");
-        addFull(inflater, container, field("Notes", artifact.getNotes()));
+        addFull(inflater, container, field(null, artifact.getNotes()));
     }
 
     private String[] field(String label, String value) {
@@ -204,7 +206,12 @@ public class ArtifactDetailFragment extends Fragment {
 
     private View buildCell(LayoutInflater inflater, ViewGroup parent, String[] field) {
         View cell = inflater.inflate(R.layout.row_detail_field, parent, false);
-        ((TextView) cell.findViewById(R.id.textFieldLabel)).setText(field[0]);
+
+        TextView label = cell.findViewById(R.id.textFieldLabel);
+
+        if (field[0] != null) label.setText(field[0]);
+        else label.setVisibility(View.GONE);
+
         ((TextView) cell.findViewById(R.id.textFieldValue)).setText(field[1]);
         return cell;
     }
