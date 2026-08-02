@@ -8,27 +8,18 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+public class SignUpPage extends AppCompatActivity implements SignUpPresenter.View {
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class SignUpPage extends AppCompatActivity {
     private EditText editEmail, editUsername, editPass, editConfirm;
     private Button buttonCreateAccount, buttonGoToLogin;
 
-    private FirebaseAuth auth;
-    private DatabaseReference usersRef;
+    private SignUpPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // views from activity_signup.xml
         editEmail = findViewById(R.id.editEmail);
         editUsername = findViewById(R.id.editUsername);
         editPass = findViewById(R.id.editPass);
@@ -36,84 +27,42 @@ public class SignUpPage extends AppCompatActivity {
         buttonCreateAccount = findViewById(R.id.buttonCreateAccount);
         buttonGoToLogin = findViewById(R.id.buttonGoToLogin);
 
-        // firebase Auth and users database
-        try {
-            auth = FirebaseAuth.getInstance();
-            usersRef = FirebaseDatabase
-                    .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
-                    .getReference("users");
-        } catch (Exception e) {
-            // Firebase not available — show the layout but disable sign-up
-            buttonCreateAccount.setEnabled(false);
-            Toast.makeText(this, "App configuration error", Toast.LENGTH_LONG).show();
-        }
+        presenter = new SignUpPresenter(this, new SignUpManager());
 
-        buttonCreateAccount.setOnClickListener(v -> handleSignUp());
+        buttonCreateAccount.setOnClickListener(v -> presenter.signUp(
+                editEmail.getText().toString().trim(),
+                editUsername.getText().toString().trim(),
+                editPass.getText().toString(),
+                editConfirm.getText().toString()));
 
-        // login page
         buttonGoToLogin.setOnClickListener(v -> finish());
     }
 
-    // validate and create Firebase Auth account
-    public void handleSignUp() {
-        String email = editEmail.getText().toString().trim();
-        String username = editUsername.getText().toString().trim();
-        String pass = editPass.getText().toString();
-        String confirm = editConfirm.getText().toString();
-
-        if (email.isEmpty() || username.isEmpty() || pass.isEmpty()) {
-            Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (pass.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!pass.equals(confirm)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // disable button to stop duplicate requests
-        buttonCreateAccount.setEnabled(false);
-        auth.createUserWithEmailAndPassword(email, pass)
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        buttonCreateAccount.setEnabled(true);
-                        Toast.makeText(this, "Sign up failed: " + task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    FirebaseUser firebaseUser = auth.getCurrentUser();
-                    if (firebaseUser == null) {
-                        buttonCreateAccount.setEnabled(true);
-                        Toast.makeText(this, "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    saveProfile(firebaseUser.getUid(), username);
-                });
+    @Override
+    public void showError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void setCreateEnabled(boolean enabled) {
+        buttonCreateAccount.setEnabled(enabled);
+    }
+    @Override
+    public void navigateToHome(String uid, String username) {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra(LoginPage.EXTRA_IS_ADMIN, false);
+        intent.putExtra("USER_NAME", username);
+        intent.putExtra("UID", uid);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
-    private void saveProfile(String uid, String username) {
-        Map<String, Object> profile = new HashMap<>();
-        profile.put("username", username);
-        profile.put("role", "user"); // new accounts are always regular users
-
-        usersRef.child(uid).updateChildren(profile).addOnCompleteListener(task -> {
-            buttonCreateAccount.setEnabled(true);
-            if (!task.isSuccessful()) {
-                Toast.makeText(this, "Failed to save profile: " + task.getException().getMessage(),
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-            // go to home after signing in
-            Toast.makeText(this, "Account created!", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.putExtra(LoginPage.EXTRA_IS_ADMIN, false);
-            intent.putExtra("USER_NAME", username);
-            intent.putExtra("UID", uid);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
     }
 }
