@@ -175,6 +175,7 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                     intent.putExtra("USER_NAME", username);
                     intent.putExtra("UID", uid);
+                    intent.putExtra("IS_ADMIN", isAdmin);
                     startActivity(intent);
                     return true;
                 } else if (id == R.id.menuLogout) {

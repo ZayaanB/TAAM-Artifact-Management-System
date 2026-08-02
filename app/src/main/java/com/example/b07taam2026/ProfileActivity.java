@@ -34,6 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean showingLikes = true;
     private String username;
     private String uid;
+    private boolean isAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (uid == null) {
             uid = new AuthManager().getCurrentUid();
         }
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
 
         findViewById(R.id.buttonProfileBack).setOnClickListener(v -> finish());
 
@@ -111,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void showArtifactDetail(Artifact artifact) {
         ArtifactDetailFragment fragment =
-                ArtifactDetailFragment.newInstance(artifact, username, uid);
+                ArtifactDetailFragment.newInstance(artifact, username, uid, isAdmin);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.profile_fragment_container, fragment)
