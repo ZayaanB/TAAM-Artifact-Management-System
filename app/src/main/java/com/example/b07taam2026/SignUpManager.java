@@ -2,8 +2,12 @@ package com.example.b07taam2026;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +21,14 @@ public class SignUpManager {
 
     private final FirebaseAuth auth;
     private final DatabaseReference usersRef;
+    private final DatabaseReference usernamesRef;
 
     public SignUpManager() {
+        FirebaseDatabase db = FirebaseDatabase
+                .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com");
         auth = FirebaseAuth.getInstance();
-        usersRef = FirebaseDatabase
-                .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
-                .getReference("users");
+        usersRef = db.getReference("users");
+        usernamesRef = db.getReference("usernames");
     }
 
     public void register(String email, String username, String password, SignUpCallback callback) {
@@ -38,8 +44,37 @@ public class SignUpManager {
                         callback.onFailure("Sign up failed. Please try again.");
                         return;
                     }
-                    saveProfile(user.getUid(), username, callback);
+                    claimUsername(user, username, callback);
                 });
+    }
+
+    private void claimUsername(FirebaseUser user, String username, SignUpCallback callback) {
+        String key = username.toLowerCase();
+        String uid = user.getUid();
+        usernamesRef.child(key).runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData currentData) {
+                if (currentData.getValue() != null) {
+                    return Transaction.abort();
+                }
+                currentData.setValue(uid);
+                return Transaction.success(currentData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot snapshot) {
+                if (error != null) {
+                    callback.onFailure(error.getMessage());
+                    return;
+                }
+                if (!committed) {
+                    user.delete(); // roll back the account we just created
+                    callback.onFailure("Username already taken");
+                    return;
+                }
+                saveProfile(uid, username, callback);
+            }
+        });
     }
 
     private void saveProfile(String uid, String username, SignUpCallback callback) {
