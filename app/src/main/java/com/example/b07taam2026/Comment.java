@@ -9,7 +9,6 @@ public class Comment {
     private String text;
     private long timestamp;
     private Map<String, Boolean> likes;
-    private Map<String, Boolean> dislikes;
     private Map<String, Comment> replies;
 
     public Comment() {}
@@ -31,8 +30,6 @@ public class Comment {
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
     public Map<String, Boolean> getLikes() { return likes; }
     public void setLikes(Map<String, Boolean> likes) { this.likes = likes; }
-    public Map<String, Boolean> getDislikes() { return dislikes; }
-    public void setDislikes(Map<String, Boolean> dislikes) { this.dislikes = dislikes; }
     public Map<String, Comment> getReplies() { return replies; }
     public void setReplies(Map<String, Comment> replies) { this.replies = replies; }
 
@@ -42,13 +39,5 @@ public class Comment {
 
     public boolean isLikedBy(String uid) {
         return uid != null && likes != null && likes.containsKey(uid);
-    }
-
-    public int getDislikeCount() {
-        return dislikes != null ? dislikes.size() : 0;
-    }
-
-    public boolean isDislikedBy(String uid) {
-        return uid != null && dislikes != null && dislikes.containsKey(uid);
     }
 }

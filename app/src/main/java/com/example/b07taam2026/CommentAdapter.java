@@ -8,8 +8,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,15 +34,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private String uid;
     private String lotNumber;
     private CommentManager commentManager;
+    private boolean isAdmin;
 
     public CommentAdapter(List<Comment> comments) {
         this.comments = comments;
     }
 
-    public void setUserContext(String uid, String lotNumber, CommentManager commentManager) {
+    public void setUserContext(String uid, String lotNumber, CommentManager commentManager, boolean isAdmin) {
         this.uid = uid;
         this.lotNumber = lotNumber;
         this.commentManager = commentManager;
+        this.isAdmin = isAdmin;
     }
 
     public void setSortMode(SortMode sortMode) {
@@ -83,8 +87,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     class CommentViewHolder extends RecyclerView.ViewHolder {
         final TextView textAuthor, textTime, textBody;
-        final ImageButton buttonLike, buttonDislike;
-        final TextView textLikeCount, textDislikeCount;
+        final ImageButton buttonLike, buttonDelete;
+        final TextView textLikeCount;
         final Button buttonReply, buttonSubmitReply;
         final EditText editReplyText;
         final LinearLayout layoutReplyInput, layoutReplies;
@@ -95,9 +99,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             textTime = itemView.findViewById(R.id.textCommentTime);
             textBody = itemView.findViewById(R.id.textCommentText);
             buttonLike = itemView.findViewById(R.id.buttonLike);
-            buttonDislike = itemView.findViewById(R.id.buttonDislike);
+            buttonDelete = itemView.findViewById(R.id.buttonDeleteComment);
             textLikeCount = itemView.findViewById(R.id.textLikeCount);
-            textDislikeCount = itemView.findViewById(R.id.textDislikeCount);
             buttonReply = itemView.findViewById(R.id.buttonReply);
             layoutReplyInput = itemView.findViewById(R.id.layoutReplyInput);
             editReplyText = itemView.findViewById(R.id.editReplyText);
@@ -122,17 +125,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     commentManager.toggleLike(lotNumber, comment.getId(), uid, liked);
             });
 
-            // Dislike button
-            boolean disliked = comment.isDislikedBy(uid);
-            buttonDislike.setImageResource(disliked ? R.drawable.ic_thumbs_down : R.drawable.ic_thumbs_down);
-            buttonDislike.getDrawable().setTint(ContextCompat.getColor(itemView.getContext(),
-                    disliked ? R.color.cinnabar : R.color.muted_taupe));
-            textDislikeCount.setText(String.valueOf(comment.getDislikeCount()));
-            textDislikeCount.setVisibility(comment.getDislikeCount() > 0 ? View.VISIBLE : View.INVISIBLE);
-            buttonDislike.setOnClickListener(v -> {
-                if (commentManager != null && uid != null && lotNumber != null)
-                    commentManager.toggleDislike(lotNumber, comment.getId(), uid, disliked);
-            });
+            // admin delete
+            buttonDelete.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+            buttonDelete.setOnClickListener(v -> confirmDelete(() -> {
+                if (commentManager != null && lotNumber != null) {
+                    commentManager.deleteComment(lotNumber, comment.getId());
+                }
+            }));
 
             // Reply toggle
             buttonReply.setOnClickListener(v -> {
@@ -168,14 +167,36 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                             .setText(entry.getValue().getText());
 
                     replyView.findViewById(R.id.buttonLike).setVisibility(View.GONE);
-                    replyView.findViewById(R.id.buttonDislike).setVisibility(View.GONE);
                     replyView.findViewById(R.id.buttonReply).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplyInput).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplies).setVisibility(View.GONE);
 
+                    View replyDelete = replyView.findViewById(R.id.buttonDeleteComment);
+                    if (isAdmin) {
+                        replyDelete.setVisibility(View.VISIBLE);
+                        replyDelete.setOnClickListener(v -> confirmDelete(() -> {
+                            if (commentManager != null && lotNumber != null) {
+                                commentManager.deleteReply(lotNumber, comment.getId(), entry.getKey());
+                            }
+                        }));
+                    }
+
                     layoutReplies.addView(replyView);
                 }
             }
+        }
+
+        // confirm before removing a comment
+        private void confirmDelete(Runnable onConfirm) {
+            new AlertDialog.Builder(itemView.getContext())
+                    .setTitle(R.string.delete_comment_dialog_title)
+                    .setMessage(R.string.delete_comment_dialog_message)
+                    .setPositiveButton(R.string.delete_dialog_confirm, (dialog, which) -> {
+                        onConfirm.run();
+                        Toast.makeText(itemView.getContext(), R.string.toast_comment_deleted, Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton(R.string.delete_dialog_cancel, null)
+                    .show();
         }
 
         private int dp(int dp) {

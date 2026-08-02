@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,18 +27,20 @@ public class ArtifactDetailFragment extends Fragment {
     private static final String ARG_ARTIFACT = "artifact";
     private static final String ARG_USERNAME = "username";
     private static final String ARG_UID = "uid";
+    private static final String ARG_IS_ADMIN = "isAdmin";
 
     private CommentManager commentManager;
     private CommentAdapter commentAdapter;
     private final List<Comment> comments = new ArrayList<>();
     private Button buttonSortNewest, buttonSortOldest;
 
-    public static ArtifactDetailFragment newInstance(Artifact artifact, String username, String uid) {
+    public static ArtifactDetailFragment newInstance(Artifact artifact, String username, String uid, boolean isAdmin) {
         ArtifactDetailFragment fragment = new ArtifactDetailFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_ARTIFACT, artifact);
         args.putString(ARG_USERNAME, username);
         args.putString(ARG_UID, uid);
+        args.putBoolean(ARG_IS_ADMIN, isAdmin);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,6 +53,7 @@ public class ArtifactDetailFragment extends Fragment {
 
         Artifact artifact = (Artifact) requireArguments().getSerializable(ARG_ARTIFACT);
         String uid = requireArguments().getString(ARG_UID);
+        boolean isAdmin = requireArguments().getBoolean(ARG_IS_ADMIN, false);
         bindArtifact(view, artifact);
 
         RecyclerView commentsView = view.findViewById(R.id.commentsRecyclerView);
@@ -56,7 +62,7 @@ public class ArtifactDetailFragment extends Fragment {
         commentsView.setAdapter(commentAdapter);
 
         commentManager = new CommentManager();
-        commentAdapter.setUserContext(uid, artifact.getLotNumber(), commentManager);
+        commentAdapter.setUserContext(uid, artifact.getLotNumber(), commentManager, isAdmin);
 
         wireSort(view);
         wireBack(view);
@@ -107,6 +113,20 @@ public class ArtifactDetailFragment extends Fragment {
         ((TextView) view.findViewById(R.id.textMaterial)).setText("Material: " + artifact.getMaterial());
         ((TextView) view.findViewById(R.id.textDynastyPeriod)).setText("Dynasty Period: " + artifact.getDynasty());
         ((TextView) view.findViewById(R.id.textDescription)).setText(artifact.getDescription());
+
+        ImageView image = view.findViewById(R.id.imageArtifactDetail);
+        String url = artifact.getImageUrl();
+        if (url != null && !url.isEmpty()) {
+            Glide.with(image.getContext())
+                    .load(url)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(image);
+        }
+        else {
+            image.setImageResource(R.drawable.ic_launcher_foreground);
+        }
     }
 
     private void wireComposer(View view) {

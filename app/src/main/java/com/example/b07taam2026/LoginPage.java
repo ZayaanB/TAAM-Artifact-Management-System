@@ -1,95 +1,76 @@
 package com.example.b07taam2026;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class LoginPage extends AppCompatActivity {
-    // key for isAdmin boolean passed to HomeActivity
+public class LoginPage extends AppCompatActivity implements LoginPresenter.View {
+
     public static final String EXTRA_IS_ADMIN = "isAdmin";
 
-    private EditText editUser, editPass; 
+    private EditText editUser, editPass;
     private Button buttonLogin, buttonSignUp;
+    private CheckBox keepSignedIn;
 
-    private AuthManager authManager;
-    private RoleManager roleManager;
-
-    private String user;
+    private LoginPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            com.google.firebase.FirebaseApp.initializeApp(this);
-        } catch (Exception ignored) { }
+        try { com.google.firebase.FirebaseApp.initializeApp(this); } catch (Exception ignored) { }
         setContentView(R.layout.activity_login);
 
-        // views from activity_login.xml
         editUser = findViewById(R.id.editUser);
         editPass = findViewById(R.id.editPass);
         buttonLogin = findViewById(R.id.buttonLogin);
         buttonSignUp = findViewById(R.id.buttonSignUp);
+        keepSignedIn = findViewById(R.id.checkKeepSignedIn);
 
-        // firebase helpers (Ryan's backend classes)
-        authManager = new AuthManager();
-        roleManager = new RoleManager();
-        
-        buttonLogin.setOnClickListener(v -> handleLogin());
+        presenter = new LoginPresenter(this, new AuthManager(), new RoleManager());
 
-        // open the sign-up screen
-        buttonSignUp.setOnClickListener(v -> startActivity(new Intent(LoginPage.this, SignUpPage.class)));
+        SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        presenter.tryAutoLogin(prefs.getBoolean("keepLoggedIn", false));
+
+        buttonLogin.setOnClickListener(v -> presenter.login(
+                editUser.getText().toString().trim(),
+                editPass.getText().toString(),
+                keepSignedIn.isChecked()));
+
+        buttonSignUp.setOnClickListener(v -> startActivity(new Intent(this, SignUpPage.class)));
     }
 
-    // validate input and attempt Firebase sign in
-    public void handleLogin() {
-        user = editUser.getText().toString().trim();
-        String pass = editPass.getText().toString().trim();
-        if (user.isEmpty() || pass.isEmpty()){
-            Toast.makeText(this, "Enter both fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // disable button to stop duplicate requests
-        buttonLogin.setEnabled(false);
-        authManager.login(user, pass, new AuthManager.AuthCallback() {
-            @Override
-            public void onSuccess(String uid) {
-                checkRoleAndProceed(uid);
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                buttonLogin.setEnabled(true);
-                Toast.makeText(LoginPage.this, "Login failed: " + errorMessage, Toast.LENGTH_LONG).show();
-            }
-        });
+    @Override
+    public void showError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+    @Override
+    public void setLoginEnabled(boolean enabled) {
+        buttonLogin.setEnabled(enabled);
+    }
+    @Override
+    public void persistKeepSignedIn(boolean keep) {
+        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .edit().putBoolean("keepLoggedIn", keep).apply();
+    }
+    @Override
+    public void navigateToHome(boolean isAdmin, String uid, String username) {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra(EXTRA_IS_ADMIN, isAdmin);
+        intent.putExtra("UID", uid);
+        intent.putExtra("USER_NAME", username);
+        startActivity(intent);
+        finish();
     }
 
-    // read user role and switch to main page
-    private void checkRoleAndProceed(String uid) {
-        roleManager.isAdmin(uid, new RoleManager.RoleCallback() {
-            @Override
-            public void onResult(boolean isAdmin) {
-                buttonLogin.setEnabled(true);
-                Intent intent = new Intent(LoginPage.this, HomeActivity.class);
-                intent.putExtra(EXTRA_IS_ADMIN, isAdmin);
-                intent.putExtra("UID", uid);
-                roleManager.fetchUsername(uid, username -> {
-                    intent.putExtra("USER_NAME", username != null ? username : user);
-                    startActivity(intent);
-                    finish();
-                });
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                buttonLogin.setEnabled(true);
-                Toast.makeText(LoginPage.this, "Role error: " + errorMessage, Toast.LENGTH_LONG).show();
-            }
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
     }
 }

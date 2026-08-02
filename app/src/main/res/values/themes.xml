@@ -12,6 +12,8 @@
         <item name="colorSurface">@color/silk</item>
         <item name="colorOnSurface">@color/ink</item>
         <item name="colorOnBackground">@color/ink</item>
+        <item name="colorSecondaryContainer">@color/cinnabar</item>
+        <item name="colorOnSecondaryContainer">@color/white</item>
     </style>
 
     <style name="Theme.B07DemoSummer2024" parent="Base.Theme.B07DemoSummer2024" />

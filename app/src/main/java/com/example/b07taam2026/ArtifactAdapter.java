@@ -62,7 +62,9 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
     }
 
     @Override
-    public int getItemCount() { return filter.size(); }
+    public int getItemCount() {
+        return filter.size();
+    }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -91,9 +93,33 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         saveManager.stopLive();
     }
 
-    public void submitList(List<Artifact> artifacts) { filter.submit(artifacts); }
+    public void submitList(List<Artifact> artifacts) {
+        filter.submit(artifacts);
+    }
 
-    public void setQuery(String q) { filter.setQuery(q); }
+    public void setQuery(String q) {
+        filter.setQuery(q);
+    }
+
+    public void setPageSize(int size) {
+        filter.setPageSize(size);
+    }
+
+    public void setPage(int page) {
+        filter.setPage(page);
+    }
+
+    public int getPage() {
+        return filter.getPage();
+    }
+
+    public int getPageCount() {
+        return filter.getPageCount();
+    }
+
+    public int getTotalCount() {
+        return filter.getTotalCount();
+    }
 
     private boolean matches(Artifact a) {
         // check if search text is a substring of these 6 mandatory fields
@@ -163,16 +189,20 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             buttonLike.setImageResource(liked
                     ? R.drawable.ic_heart_filled
                     : R.drawable.ic_heart_outline);
-            buttonLike.setOnClickListener(v -> {
-                if (uid != null) likeManager.setLike(lot, uid, !liked);
-            });
+            View.OnClickListener likeClick = v -> {
+                if (uid != null)
+                    likeManager.setLike(lot, uid, !liked);
+            };
+            buttonLike.setOnClickListener(likeClick);
+            textLikeCount.setOnClickListener(likeClick);
 
             boolean saved = savedByMe.contains(lot);
             buttonSave.setImageResource(saved
                     ? R.drawable.ic_bookmark_filled
                     : R.drawable.ic_bookmark_outline);
             buttonSave.setOnClickListener(v -> {
-                if (uid != null) saveManager.setSaved(lot, uid, !saved);
+                if (uid != null)
+                    saveManager.setSaved(lot, uid, !saved);
             });
 
             buttonReadMore.setOnClickListener(v -> {
