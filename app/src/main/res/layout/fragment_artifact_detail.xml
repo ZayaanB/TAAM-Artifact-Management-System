@@ -60,41 +60,19 @@
                 android:src="@drawable/ic_launcher_foreground" />
 
             <TextView
-                android:id="@+id/textLotNumber"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Lot Number" />
-
-            <TextView
-                android:id="@+id/textCategory"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Category" />
-
-            <TextView
-                android:id="@+id/textMaterial"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Material" />
-
-            <TextView
-                android:id="@+id/textDynastyPeriod"
-                style="@style/TextAppearance.TAAM.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Dynasty Period" />
-
-            <TextView
                 android:id="@+id/textDescription"
                 style="@style/TextAppearance.TAAM.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Description" />
+
+            <LinearLayout
+                android:id="@+id/detailFieldsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical" />
 
             <View
                 android:layout_width="match_parent"

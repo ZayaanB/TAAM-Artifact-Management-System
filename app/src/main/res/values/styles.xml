@@ -78,4 +78,19 @@
         <item name="android:textColor">@color/muted_taupe</item>
     </style>
 
+
+    <!-- Expanded artifact view text -->
+    <style name="TextAppearance.TAAM.FieldLabel" parent="TextAppearance.MaterialComponents.Overline">
+        <item name="android:textColor">@color/muted_taupe</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextAppearance.TAAM.SectionHeader" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:textColor">@color/cinnabar</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
 </resources>
