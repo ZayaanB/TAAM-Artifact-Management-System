@@ -58,6 +58,11 @@ public class ExampleUnitTest {
     private LoginPresenter loginPresenter;
     private AutoCloseable closeable;
 
+    @Config(
+            sdk = 33,
+            manifest = Config.NONE,
+            instrumentedPackages = {"com.example.b07taam2026"}
+    )
     @Before
     public void setup() {
         closeable = MockitoAnnotations.openMocks(this);
@@ -85,7 +90,6 @@ public class ExampleUnitTest {
 
     @Test
     public void testLoginSuccess() {
-        // 1. Capture the Auth callback
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
         loginPresenter.login("test@test.com", "pass123", true);
 
@@ -129,6 +133,35 @@ public class ExampleUnitTest {
     }
 
     @Test
+    public void testLoginRoleError() {
+        ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
+        loginPresenter.login("test@test.com", "password123", false);
+
+        verify(mockAuthManager).login(anyString(), anyString(), authCaptor.capture());
+        authCaptor.getValue().onSuccess("uid123");
+
+        ArgumentCaptor<RoleManager.RoleCallback> roleCaptor = ArgumentCaptor.forClass(RoleManager.RoleCallback.class);
+        verify(mockRoleManager).isAdmin(eq("uid123"), roleCaptor.capture());
+        roleCaptor.getValue().onError("Database Offline");
+
+        verify(mockLoginView).setLoginEnabled(true);
+        verify(mockLoginView).showError("Role error: Database Offline");
+    }
+
+    @Test
+    public void testLoginDetachDuringAuth() {
+        ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
+        loginPresenter.login("test@test.com", "pass", false);
+        verify(mockAuthManager).login(anyString(), anyString(), authCaptor.capture());
+
+        loginPresenter.detachView(); // DETACH
+        authCaptor.getValue().onFailure("error");
+
+        verify(mockLoginView, never()).showError(anyString());
+    }
+
+    // SignUp Presenter Tests
+    @Test
     public void testSignUpEmptyEmail() {
         signUpPresenter.signUp("", "user", "pass123", "pass123");
         verify(mockSignUpView).showError("Please fill out all fields");
@@ -171,4 +204,33 @@ public class ExampleUnitTest {
     }
 
 
+    @Test
+    public void testSignUpDetachViewOnSuccess() {
+        ArgumentCaptor<SignUpManager.SignUpCallback> captor = ArgumentCaptor.forClass(SignUpManager.SignUpCallback.class);
+        signUpPresenter.signUp("test@test.com", "John", "password123", "password123");
+        verify(mockSignUpManager).register(anyString(), anyString(), anyString(), captor.capture());
+
+        signUpPresenter.detachView();
+
+        captor.getValue().onSuccess("uid123", "John");
+
+        verify(mockSignUpView, never()).showMessage(anyString());
+        verify(mockSignUpView, never()).navigateToHome(anyString(), anyString());
+    }
+
+    @Test
+    public void testSignUpDetachViewOnFailure() {
+        ArgumentCaptor<SignUpManager.SignUpCallback> captor = ArgumentCaptor.forClass(SignUpManager.SignUpCallback.class);
+
+        signUpPresenter.signUp("test@test.com", "John", "password123", "password123");
+        verify(mockSignUpManager).register(anyString(), anyString(), anyString(), captor.capture());
+
+        signUpPresenter.detachView();
+
+        captor.getValue().onFailure("Server Error");
+
+        verify(mockSignUpView).setCreateEnabled(false);
+        verify(mockSignUpView, never()).setCreateEnabled(true);
+        verify(mockSignUpView, never()).showError(anyString());
+    }
 }
