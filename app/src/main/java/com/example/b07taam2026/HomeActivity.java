@@ -151,6 +151,10 @@ public class HomeActivity extends AppCompatActivity {
         buttonMenu.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(HomeActivity.this, v);
             popup.getMenuInflater().inflate(R.layout.home_dropdown_menu, popup.getMenu());
+
+            // tick the saved option
+            popup.getMenu().findItem(PAGE_SIZE_MENU_IDS[paginationPrefs.getSelectedIndex()]).setChecked(true);
+
             popup.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
 
