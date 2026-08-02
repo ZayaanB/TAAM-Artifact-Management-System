@@ -3,6 +3,27 @@
     <item
         android:id="@+id/menuProfile"
         android:title="@string/menu_profile" />
+
+    <item
+        android:id="@+id/menuPageSize"
+        android:title="@string/menu_page_size">
+        <menu>
+            <group
+                android:id="@+id/groupPageSize"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menuPageSize12"
+                    android:title="@string/page_size_12" />
+                <item
+                    android:id="@+id/menuPageSize24"
+                    android:title="@string/page_size_24" />
+                <item
+                    android:id="@+id/menuPageSizeAll"
+                    android:title="@string/page_size_all" />
+            </group>
+        </menu>
+    </item>
+
     <item
         android:id="@+id/menuLogout"
         android:title="@string/menu_logout" />

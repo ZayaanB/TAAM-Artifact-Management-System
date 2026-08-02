@@ -95,6 +95,12 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
 
     public void setQuery(String q) { filter.setQuery(q); }
 
+    public void setPageSize(int size) { filter.setPageSize(size); }
+    public void setPage(int page) { filter.setPage(page); }
+    public int getPage() { return filter.getPage(); }
+    public int getPageCount() { return filter.getPageCount(); }
+    public int getTotalCount() { return filter.getTotalCount(); }
+
     private boolean matches(Artifact a) {
         // check if search text is a substring of these 6 mandatory fields
         return contains(a.getName())

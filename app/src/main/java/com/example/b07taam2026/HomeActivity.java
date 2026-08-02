@@ -3,6 +3,7 @@ package com.example.b07taam2026;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageButton;
@@ -36,6 +37,13 @@ public class HomeActivity extends AppCompatActivity {
     private TextView textNoMatches;
     private FloatingActionButton adminMenuBtn;
     private ExtendedFloatingActionButton manageAdminsBtn, manageArtifactsBtn;
+    private PaginationPrefs paginationPrefs;
+    private TextView textPageIndicator;
+    private Button buttonPrevPage, buttonNextPage;
+    private RecyclerView recyclerView;
+    private static final int[] PAGE_SIZE_MENU_IDS = {
+            R.id.menuPageSize12, R.id.menuPageSize24, R.id.menuPageSizeAll
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,17 +98,28 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        RecyclerView recyclerView = findViewById(R.id.artifactRecyclerView);
+        recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ArtifactAdapter(new ArrayList<>());
         adapter.setOnReadMoreClickListener(this::showArtifactDetail);
         recyclerView.setAdapter(adapter);
+
+        paginationPrefs = new PaginationPrefs(this);
+        adapter.setPageSize(paginationPrefs.getPageSize()); // restore user pref for page size
+
+        textPageIndicator = findViewById(R.id.textPageIndicator);
+        buttonNextPage = findViewById(R.id.buttonNextPage);
+        buttonPrevPage = findViewById(R.id.buttonPrevPage);
+
+        buttonNextPage.setOnClickListener(v -> goToPage(adapter.getPage() + 1));
+        buttonPrevPage.setOnClickListener(v -> goToPage(adapter.getPage() - 1));
 
         manager = new ArtifactManager();
         manager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
             public void onResult(List<Artifact> artifacts) {
                 adapter.submitList(artifacts);
+                updatePaginationUI();
                 updateEmptyText();
             }
 
@@ -115,6 +134,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 adapter.setQuery(query);
+                updatePaginationUI();
                 updateEmptyText();
                 search.clearFocus();
                 return true;
@@ -122,6 +142,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 adapter.setQuery(newText);
+                updatePaginationUI();
                 updateEmptyText();
                 return true;
             }
@@ -130,8 +151,22 @@ public class HomeActivity extends AppCompatActivity {
         buttonMenu.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(HomeActivity.this, v);
             popup.getMenuInflater().inflate(R.layout.home_dropdown_menu, popup.getMenu());
+
+            // tick the saved option
+            popup.getMenu().findItem(PAGE_SIZE_MENU_IDS[paginationPrefs.getSelectedIndex()]).setChecked(true);
+
             popup.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
+
+                // check if the clicked id is one of the 3 page size radio buttons
+                int pageSizeIndex = -1;
+                for (int i = 0; i < PAGE_SIZE_MENU_IDS.length; i++) if (PAGE_SIZE_MENU_IDS[i] == id) pageSizeIndex = i;
+                if (pageSizeIndex != -1) {
+                    item.setChecked(true);
+                    applyPageSize(pageSizeIndex);
+                    return true;
+                }
+
                 if (id == R.id.menuProfile) {
                     // Yet to do
                     logout();
@@ -165,6 +200,35 @@ public class HomeActivity extends AppCompatActivity {
         manageArtifactsBtn.setVisibility(View.GONE);
         adminMenuBtn.setImageResource(R.drawable.ic_add);
         isAdminMenuOpen = false;
+    }
+
+    private void applyPageSize(int index) {
+        int size = PaginationPrefs.OPTIONS[index];
+        paginationPrefs.setPageSize(size);
+        adapter.setPageSize(size);
+        recyclerView.scrollToPosition(0);
+        updatePaginationUI();
+    }
+
+    private void goToPage(int page) {
+        adapter.setPage(page);
+        recyclerView.scrollToPosition(0);
+        updatePaginationUI();
+    }
+
+    private void updatePaginationUI() {
+        int page = adapter.getPage();
+        int pageCount = adapter.getPageCount();
+
+        textPageIndicator.setText(getString(R.string.page_indicator, page + 1, pageCount, adapter.getTotalCount()));
+
+        buttonNextPage.setEnabled(page < pageCount - 1); // next button disabled if last page
+        buttonPrevPage.setEnabled(page > 0); // prev button disabled if first page
+
+        // if only one single page the buttons are not displayed
+        boolean showBar = pageCount > 1;
+        buttonNextPage.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+        buttonPrevPage.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void logout() {
