@@ -248,7 +248,7 @@ public class HomeActivity extends AppCompatActivity {
     private void showArtifactDetail(Artifact artifact) {
         String username = getIntent().getStringExtra("USER_NAME");
         String uid = getIntent().getStringExtra("UID");
-        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact, username, uid);
+        ArtifactDetailFragment fragment = ArtifactDetailFragment.newInstance(artifact, username, uid, isAdmin);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.fragment_container, fragment)
