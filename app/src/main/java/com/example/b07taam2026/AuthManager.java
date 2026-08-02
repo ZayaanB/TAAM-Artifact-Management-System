@@ -11,6 +11,7 @@ public class AuthManager {
     public AuthManager() {
         memberAuth = FirebaseAuth.getInstance();
     }
+    public AuthManager(FirebaseAuth auth) { this.memberAuth = auth; }
 
     // uid of the signed in user null if nobody is signed in
     public String getCurrentUid() {
