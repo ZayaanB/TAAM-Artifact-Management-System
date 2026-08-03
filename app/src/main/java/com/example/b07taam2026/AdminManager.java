@@ -32,7 +32,7 @@ public class AdminManager {
         void onError(String errorMessage);
     }
 
-    public void addAdmin(String email, WriteCallback callback) {
+    public void addAdmin(String email, WriteCallback callback, String role) {
         usersRef.orderByChild("email").equalTo(email).get()
                 .addOnSuccessListener(snapshot -> {
                     if (!snapshot.exists()) {
@@ -42,7 +42,7 @@ public class AdminManager {
                     // get the role and update by UID
                     DataSnapshot userSnapshot = snapshot.getChildren().iterator().next();
                     String uid = userSnapshot.getKey();
-                    usersRef.child(uid).child("role").setValue("admin")
+                    usersRef.child(uid).child("role").setValue(role)
                             .addOnSuccessListener(a -> callback.onSuccess())
                             .addOnFailureListener(e -> callback.onError(e.getMessage()));
                 })
@@ -56,8 +56,15 @@ public class AdminManager {
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
+    public void updateAdminRole(String uid, String role, WriteCallback callback){
+        usersRef.child(uid).child("role").setValue(role)
+                .addOnSuccessListener(a -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    }
+
     public void startLive(AdminCallback callback) {
-        liveQuery = usersRef.orderByChild("role").equalTo("admin");
+        // Find all roles that start with admin (i.e. admin and admin_m)
+        liveQuery = usersRef.orderByChild("role").startAt("admin").endAt("admin\uf8ff");
         liveListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -65,8 +72,11 @@ public class AdminManager {
                 for (DataSnapshot child : snapshot.getChildren()){
                     User u = child.getValue(User.class);
                     if(u != null){
-                        u.setUid(child.getKey());
-                        admins.add(u);
+                        String role = u.getRole();
+                        if("admin".equals(role) || "admin_m".equals(role)){
+                            u.setUid(child.getKey());
+                            admins.add(u);
+                        }
                     }
                 }
                 callback.onResult(admins);

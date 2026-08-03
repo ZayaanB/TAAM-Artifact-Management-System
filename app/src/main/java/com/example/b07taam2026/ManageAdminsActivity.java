@@ -14,8 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SwitchCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +28,14 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
     private EditText editEmail;
     private Button buttonSubmit;
     private TextView textNoMatches;
+    private SwitchCompat switchIsManager;
 
     private SearchView searchView;
+    private TextView textFormTitle;
+    private String editingUid = null;
+    private ImageButton buttonCancelEdit;
+    private NestedScrollView manageScroll;
+    private View cardAddForm;
 
 
     private ManageAdminsAdapter adapter;
@@ -46,7 +54,7 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
         // RecyclerView Setup:
         RecyclerView recycler = findViewById(R.id.recyclerManage);
         recycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ManageAdminsAdapter(adminList, this);
+        adapter = new ManageAdminsAdapter(adminList, this, getIntent().getStringExtra("UID"));
         recycler.setAdapter(adapter);
 
         //manager setup and getting live data
@@ -55,7 +63,7 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
             @Override
             public void onResult(List<User> admins){
                 adapter.submitList(admins);
-                textNoMatches.setVisibility(adminList.isEmpty() ? View.VISIBLE : View.GONE);
+                updateEmptyText();
             }
 
             @Override
@@ -68,12 +76,14 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
             @Override
             public boolean onQueryTextChange(String newText){
                 adapter.setQuery(newText);
+                updateEmptyText();
                 return true;
             }
 
             @Override
             public boolean onQueryTextSubmit(String query){
                 adapter.setQuery(query);
+                updateEmptyText();
                 searchView.clearFocus();
                 return true;
             }
@@ -89,18 +99,41 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
                 return;
             }
 
-            manager.addAdmin(email, new AdminManager.WriteCallback() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(ManageAdminsActivity.this, R.string.toast_admin_added, Toast.LENGTH_SHORT).show();
-                    editEmail.setText("");
-                }
+            String role;
+            if(switchIsManager.isChecked()){
+                role = "admin_m";
+            } else{
+                role = "admin";
+            }
 
-                @Override
-                public void onError(String errorMessage) {
-                    Toast.makeText(ManageAdminsActivity.this, R.string.toast_admin_add_fail + errorMessage, Toast.LENGTH_LONG).show();
-                }
-            });
+            if(editingUid == null){
+                manager.addAdmin(email, new AdminManager.WriteCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(ManageAdminsActivity.this, R.string.toast_admin_added, Toast.LENGTH_SHORT).show();
+                        editEmail.setText("");
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(ManageAdminsActivity.this, R.string.toast_admin_add_fail + errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                }, role);
+            } else{
+                manager.updateAdminRole(editingUid, role, new AdminManager.WriteCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(ManageAdminsActivity.this, R.string.toast_admin_added, Toast.LENGTH_SHORT).show();
+                        editExitMode();
+                    }
+                    @Override
+                    public void onError(String errorMessage){
+                        Toast.makeText(ManageAdminsActivity.this, R.string.toast_admin_add_fail + errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.manageRoot), (v, insets) -> {
@@ -116,6 +149,20 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
         buttonSubmit = findViewById(R.id.buttonSubmitArtifact);
         textNoMatches = findViewById(R.id.textNoMatches);
         searchView = findViewById(R.id.searchManage);
+        switchIsManager = findViewById(R.id.switchIsManager);
+        textFormTitle = findViewById(R.id.textFormTitle);
+        manageScroll = findViewById(R.id.manageScroll);
+        cardAddForm = findViewById(R.id.cardAddForm);
+        buttonCancelEdit = findViewById(R.id.buttonCancelEdit);
+
+        buttonCancelEdit.setOnClickListener(v -> editExitMode());
+    }
+
+    private void updateEmptyText(){
+        if(adapter != null && textNoMatches != null){
+            boolean isEmpty = adapter.getItemCount() == 0;
+            textNoMatches.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override
@@ -131,6 +178,36 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
                 Toast.makeText(ManageAdminsActivity.this, R.string.toast_admin_remove_fail + errorMessage, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onEditClicked(User user){
+        editingUid = user.getUid();
+
+        //fill out form with current data
+        editEmail.setText(user.getEmail());
+        editEmail.setEnabled(false);
+        switchIsManager.setChecked(user.getRole().equals("admin_m"));
+
+        textFormTitle.setText("Edit Admin Permissions");
+        buttonSubmit.setText("Save Changes");
+
+        buttonCancelEdit.setVisibility(View.VISIBLE);
+
+        manageScroll.post(() -> manageScroll.smoothScrollTo(0, cardAddForm.getTop()));
+    }
+
+    private void editExitMode(){
+        editingUid = null;
+
+        editEmail.setText("");
+        editEmail.setEnabled(true);
+        switchIsManager.setChecked(false);
+
+        textFormTitle.setText(R.string.section_add_admin);
+        buttonSubmit.setText(R.string.action_add_admin);
+
+        buttonCancelEdit.setVisibility(View.GONE);
     }
 
     @Override

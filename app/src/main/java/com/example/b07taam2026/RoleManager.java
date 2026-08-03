@@ -68,7 +68,7 @@ public class RoleManager {
                         if (role == null) {
                             callback.onError("No role set for this user");
                         } else {
-                            callback.onResult("admin".equals(role));
+                            callback.onResult("admin".equals(role) || "admin_m".equals(role));
                         }
                     }
                     @Override
