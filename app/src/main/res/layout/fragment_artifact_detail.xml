@@ -109,8 +109,7 @@
                     android:layout_height="44dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/like"
-                    android:src="@drawable/ic_heart_outline"
-                    app:tint="@color/cinnabar" />
+                    android:src="@drawable/ic_heart_outline" />
 
                 <TextView
                     android:id="@+id/textLikeCountDetail"
@@ -127,8 +126,7 @@
                     android:layout_marginStart="12dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/save"
-                    android:src="@drawable/ic_bookmark_outline"
-                    app:tint="@color/ink" />
+                    android:src="@drawable/ic_bookmark_outline" />
 
                 <View
                     android:layout_width="0dp"
