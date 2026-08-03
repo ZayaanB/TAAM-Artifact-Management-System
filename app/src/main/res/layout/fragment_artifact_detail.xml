@@ -144,6 +144,29 @@
                     app:tint="@color/cinnabar" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/sectionRelatedArtifacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TextAppearance.TAAM.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/related_artifacts" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/relatedArtifactsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
+            </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

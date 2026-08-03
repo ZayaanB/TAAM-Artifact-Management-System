@@ -3,6 +3,7 @@
 
     <!-- Artifact View Page (confirm pls) -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="related_artifacts">Related Artifacts</string>
     <string name="delete_item">Delete Item</string>
     <string name="add_item">Add Item</string>
     <string name="back">Back</string>

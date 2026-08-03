@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +26,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class ArtifactDetailFragment extends Fragment {
 
     private static final String ARG_ARTIFACT = "artifact";
@@ -40,6 +43,7 @@ public class ArtifactDetailFragment extends Fragment {
     private boolean savedByMe;
     private final List<Comment> comments = new ArrayList<>();
     private Button buttonSortNewest, buttonSortOldest;
+    private RelatedArtifactAdapter relatedAdapter;
 
     public static ArtifactDetailFragment newInstance(Artifact artifact, String username, String uid, boolean isAdmin) {
         ArtifactDetailFragment fragment = new ArtifactDetailFragment();
@@ -88,6 +92,7 @@ public class ArtifactDetailFragment extends Fragment {
         });
 
         wireComposer(view);
+        wireRelated(view, artifact);
         return view;
     }
 
@@ -219,6 +224,65 @@ public class ArtifactDetailFragment extends Fragment {
         input.setText("");
     }
 
+    private void wireRelated(View view, Artifact artifact) {
+        RecyclerView relatedView = view.findViewById(R.id.relatedArtifactsRecyclerView);
+        relatedView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        relatedAdapter = new RelatedArtifactAdapter();
+        relatedAdapter.setOnArtifactClickListener(this::openRelatedArtifact);
+        relatedView.setAdapter(relatedAdapter);
+
+        artifactManager = new ArtifactManager();
+        artifactManager.startLive(new ArtifactManager.ArtifactCallback() {
+            @Override
+            public void onResult(List<Artifact> artifacts) {
+                List<Artifact> related = findRelated(artifact, artifacts);
+                relatedAdapter.submitList(related);
+                view.findViewById(R.id.sectionRelatedArtifacts)
+                        .setVisibility(related.isEmpty() ? View.GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(requireContext(), "Failed to load related artifacts: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void openRelatedArtifact(Artifact artifact) {
+        ArtifactDetailFragment next = ArtifactDetailFragment.newInstance(artifact,
+                requireArguments().getString(ARG_USERNAME),
+                requireArguments().getString(ARG_UID),
+                requireArguments().getBoolean(ARG_IS_ADMIN, false));
+        ViewGroup container = (ViewGroup) requireView().getParent();
+        FragmentManager fm = getParentFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fm.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(container.getId(), next)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    static List<Artifact> findRelated(Artifact current, List<Artifact> artifacts) {
+        String lot = current.getLotNumber();
+        List<Artifact> related = new ArrayList<>();
+        for (Artifact other : artifacts) {
+            if ((lot == null || !lot.equals(other.getLotNumber())) && isRelated(current, other)) {
+                related.add(other);
+            }
+        }
+        return related;
+    }
+
+    static boolean isRelated(Artifact current, Artifact other) {
+        return equal(current.getDynasty(), other.getDynasty())
+                && equal(current.getCurrentLocation(), other.getCurrentLocation());
+    }
+
+    private static boolean equal(String a, String b) {
+        return a != null && !a.isEmpty() && a.equalsIgnoreCase(b);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -230,6 +294,9 @@ public class ArtifactDetailFragment extends Fragment {
         }
         if (saveManager != null) {
             saveManager.stopLive();
+        }
+        if (artifactManager != null) {
+            artifactManager.stopLive();
         }
     }
 }
