@@ -19,6 +19,9 @@ public class RoleManager {
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
                 .getReference("users");
     }
+    public RoleManager(DatabaseReference usersRef) {
+        this.usersRef = usersRef;
+    }
 
     // how role results get reported back to the caller
     public interface RoleCallback {

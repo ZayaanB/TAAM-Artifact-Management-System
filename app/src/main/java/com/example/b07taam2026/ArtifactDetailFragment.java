@@ -7,13 +7,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageButton;
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +27,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class ArtifactDetailFragment extends Fragment {
 
     private static final String ARG_ARTIFACT = "artifact";
@@ -31,8 +37,15 @@ public class ArtifactDetailFragment extends Fragment {
 
     private CommentManager commentManager;
     private CommentAdapter commentAdapter;
+    private LikeManager likeManager;
+    private SaveManager saveManager;
+    private ArtifactManager artifactManager;
+    private boolean likedByMe;
+    private boolean savedByMe;
     private final List<Comment> comments = new ArrayList<>();
     private Button buttonSortNewest, buttonSortOldest;
+    private static final int COLUMN_GAP_DP = 8;
+    private RelatedArtifactAdapter relatedAdapter;
 
     public static ArtifactDetailFragment newInstance(Artifact artifact, String username, String uid, boolean isAdmin) {
         ArtifactDetailFragment fragment = new ArtifactDetailFragment();
@@ -55,6 +68,7 @@ public class ArtifactDetailFragment extends Fragment {
         String uid = requireArguments().getString(ARG_UID);
         boolean isAdmin = requireArguments().getBoolean(ARG_IS_ADMIN, false);
         bindArtifact(view, artifact);
+        wireActions(view, artifact, uid, isAdmin);
 
         RecyclerView commentsView = view.findViewById(R.id.commentsRecyclerView);
         commentsView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -80,6 +94,7 @@ public class ArtifactDetailFragment extends Fragment {
         });
 
         wireComposer(view);
+        wireRelated(view, artifact);
         return view;
     }
 
@@ -105,14 +120,70 @@ public class ArtifactDetailFragment extends Fragment {
             buttonSortNewest.setTextColor(inactive);
         });
     }
+    private void wireActions(View view, Artifact artifact, String uid, boolean isAdmin) {
+        String lot = artifact.getLotNumber();
 
+        ImageButton buttonLike = view.findViewById(R.id.buttonLikeDetail);
+        TextView textLikeCount = view.findViewById(R.id.textLikeCountDetail);
+        ImageButton buttonSave = view.findViewById(R.id.buttonSaveDetail);
+        ImageButton buttonDelete = view.findViewById(R.id.buttonDeleteDetail);
+
+        likeManager = new LikeManager();
+        saveManager = new SaveManager();
+
+        likeManager.startLive(uid, (counts, mine) -> {
+            Long count = counts.get(lot);
+            likedByMe = mine.contains(lot);
+            textLikeCount.setText(String.valueOf(count == null ? 0 : count));
+            buttonLike.setImageResource(likedByMe
+                    ? R.drawable.ic_heart_filled
+                    : R.drawable.ic_heart_outline);
+        });
+        buttonLike.setOnClickListener(v -> {
+            if (uid != null) likeManager.setLike(lot, uid, !likedByMe);
+        });
+
+        saveManager.startLive(uid, saved -> {
+            savedByMe = saved.contains(lot);
+            buttonSave.setImageResource(savedByMe
+                    ? R.drawable.ic_bookmark_filled
+                    : R.drawable.ic_bookmark_outline);
+        });
+        buttonSave.setOnClickListener(v -> {
+            if (uid != null) saveManager.setSaved(lot, uid, !savedByMe);
+        });
+
+        if (isAdmin) {
+            buttonDelete.setVisibility(View.VISIBLE);
+            buttonDelete.setOnClickListener(v -> confirmDelete(artifact));
+        }
+    }
+
+    private void confirmDelete(Artifact artifact) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_dialog_title)
+                .setMessage(R.string.delete_dialog_message)
+                .setPositiveButton(R.string.delete_dialog_confirm, (d, w) -> {
+                    if (artifactManager == null) artifactManager = new ArtifactManager();
+                    artifactManager.deleteArtifact(artifact.getLotNumber(), new ArtifactManager.WriteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (!isAdded()) return;
+                            Toast.makeText(requireContext(), R.string.toast_artifact_deleted, Toast.LENGTH_SHORT).show();
+                            getParentFragmentManager().popBackStack();
+                        }
+                        @Override
+                        public void onError(String errorMessage) {
+                            if (!isAdded()) return;
+                            Toast.makeText(requireContext(), "Delete failed: " + errorMessage, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .setNegativeButton(R.string.delete_dialog_cancel, null)
+                .show();
+    }
     private void bindArtifact(View view, Artifact artifact) {
         ((TextView) view.findViewById(R.id.textArtifactName)).setText(artifact.getName());
-        ((TextView) view.findViewById(R.id.textLotNumber)).setText("Lot Number: " + artifact.getLotNumber());
-        ((TextView) view.findViewById(R.id.textCategory)).setText("Category: " + artifact.getCategory());
-        ((TextView) view.findViewById(R.id.textMaterial)).setText("Material: " + artifact.getMaterial());
-        ((TextView) view.findViewById(R.id.textDynastyPeriod)).setText("Dynasty Period: " + artifact.getDynasty());
-        ((TextView) view.findViewById(R.id.textDescription)).setText(artifact.getDescription());
 
         ImageView image = view.findViewById(R.id.imageArtifactDetail);
         String url = artifact.getImageUrl();
@@ -127,6 +198,101 @@ public class ArtifactDetailFragment extends Fragment {
         else {
             image.setImageResource(R.drawable.ic_launcher_foreground);
         }
+
+        bindFields(view, artifact);
+    }
+
+    private void bindFields(View view, Artifact artifact) {
+        LinearLayout container = view.findViewById(R.id.detailFieldsContainer);
+        container.removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(container.getContext());
+
+        addHeader(inflater, container, "Description");
+        addFull(inflater, container, field(null, artifact.getDescription()));
+
+        addHeader(inflater, container, "Identification");
+        addPair(inflater, container,
+                field("Lot Number", artifact.getLotNumber()),
+                field("Accession Number", artifact.getAccessionNumber())
+        );
+        addPair(inflater, container,
+                field("Category", artifact.getCategory()),
+                field("Material", artifact.getMaterial())
+        );
+
+        addHeader(inflater, container, "Physical");
+        addPair(inflater, container,
+                field("Dimensions", artifact.getDimensions()),
+                field("Current Location", artifact.getCurrentLocation())
+        );
+        addFull(inflater, container, field("Condition Report", artifact.getConditionReport()));
+
+        addHeader(inflater, container, "Origin & History");
+        addPair(inflater, container,
+                field("Dynasty / Period", artifact.getDynasty()),
+                field("Cultural Origin", artifact.getCulturalOrigin())
+        );
+        addFull(inflater, container, field("Provenance", artifact.getProvenance()));
+
+        addHeader(inflater, container, "Collection");
+        addFull(inflater, container, field("Acquisition Method", artifact.getAcquisitionMethod()));
+
+        addHeader(inflater, container, "Notes");
+        addFull(inflater, container, field(null, artifact.getNotes()));
+    }
+
+    private String[] field(String label, String value) {
+        return new String[]{label, value};
+    }
+
+    private void addHeader(LayoutInflater inflater, LinearLayout container, String title) {
+        View header = inflater.inflate(R.layout.row_detail_section, container, false);
+        ((TextView) header.findViewById(R.id.textSectionTitle)).setText(title);
+        container.addView(header);
+    }
+
+    private void addFull(LayoutInflater inflater, LinearLayout container, String[] field) {
+        container.addView(buildCell(inflater, container, field));
+    }
+
+    private void addPair(LayoutInflater inflater, LinearLayout container, String[] left, String[] right) {
+        LinearLayout row = new LinearLayout(container.getContext());
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setBaselineAligned(false);
+
+        addWeightedCell(inflater, row, left, 0, COLUMN_GAP_DP);
+        addWeightedCell(inflater, row, right, COLUMN_GAP_DP, 0);
+
+        container.addView(row, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    }
+
+    private void addWeightedCell(LayoutInflater inflater, LinearLayout row, String[] field, int startDp, int endDp) {
+        View cell = buildCell(inflater, row, field);
+
+        // equal split for each cell
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        params.setMarginStart(dpToPx(row, startDp));
+        params.setMarginEnd(dpToPx(row, endDp));
+
+        row.addView(cell, params);
+    }
+
+    private View buildCell(LayoutInflater inflater, ViewGroup parent, String[] field) {
+        View cell = inflater.inflate(R.layout.row_detail_field, parent, false);
+
+        TextView label = cell.findViewById(R.id.textFieldLabel);
+
+        if (field[0] != null) label.setText(field[0]);
+        else label.setVisibility(View.GONE);
+
+        ((TextView) cell.findViewById(R.id.textFieldValue)).setText(field[1]);
+        return cell;
+    }
+
+    private int dpToPx(View view, int value) {
+        // convert dp to screen pixels
+        return Math.round(value * view.getResources().getDisplayMetrics().density);
     }
 
     private void wireComposer(View view) {
@@ -150,11 +316,79 @@ public class ArtifactDetailFragment extends Fragment {
         input.setText("");
     }
 
+    private void wireRelated(View view, Artifact artifact) {
+        RecyclerView relatedView = view.findViewById(R.id.relatedArtifactsRecyclerView);
+        relatedView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        relatedAdapter = new RelatedArtifactAdapter();
+        relatedAdapter.setOnArtifactClickListener(this::openRelatedArtifact);
+        relatedView.setAdapter(relatedAdapter);
+
+        artifactManager = new ArtifactManager();
+        artifactManager.startLive(new ArtifactManager.ArtifactCallback() {
+            @Override
+            public void onResult(List<Artifact> artifacts) {
+                List<Artifact> related = findRelated(artifact, artifacts);
+                relatedAdapter.submitList(related);
+                view.findViewById(R.id.sectionRelatedArtifacts)
+                        .setVisibility(related.isEmpty() ? View.GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(requireContext(), "Failed to load related artifacts: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void openRelatedArtifact(Artifact artifact) {
+        ArtifactDetailFragment next = ArtifactDetailFragment.newInstance(artifact,
+                requireArguments().getString(ARG_USERNAME),
+                requireArguments().getString(ARG_UID),
+                requireArguments().getBoolean(ARG_IS_ADMIN, false));
+        ViewGroup container = (ViewGroup) requireView().getParent();
+        FragmentManager fm = getParentFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fm.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(container.getId(), next)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    static List<Artifact> findRelated(Artifact current, List<Artifact> artifacts) {
+        String lot = current.getLotNumber();
+        List<Artifact> related = new ArrayList<>();
+        for (Artifact other : artifacts) {
+            if ((lot == null || !lot.equals(other.getLotNumber())) && isRelated(current, other)) {
+                related.add(other);
+            }
+        }
+        return related;
+    }
+
+    static boolean isRelated(Artifact current, Artifact other) {
+        return equal(current.getDynasty(), other.getDynasty())
+                && equal(current.getCurrentLocation(), other.getCurrentLocation());
+    }
+
+    private static boolean equal(String a, String b) {
+        return a != null && !a.isEmpty() && a.equalsIgnoreCase(b);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (commentManager != null) {
             commentManager.stopLive();
+        }
+        if (likeManager != null) {
+            likeManager.stopLive();
+        }
+        if (saveManager != null) {
+            saveManager.stopLive();
+        }
+        if (artifactManager != null) {
+            artifactManager.stopLive();
         }
     }
 }

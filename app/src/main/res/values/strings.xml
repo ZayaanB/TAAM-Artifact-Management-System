@@ -3,6 +3,7 @@
 
     <!-- Artifact View Page (confirm pls) -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="related_artifacts">Related Artifacts</string>
     <string name="delete_item">Delete Item</string>
     <string name="add_item">Add Item</string>
     <string name="back">Back</string>
@@ -10,6 +11,8 @@
     <string name="scroller">Scroller</string>
     <string name="spinner">Spinner</string>
     <string name="manage_items">Manage Items</string>
+    <string name="like">Like</string>
+    <string name="save">Save</string>
 
     <!-- Login Page -->
     <string name="login_title">Welcome to Toronto Asian Art Museum</string>
