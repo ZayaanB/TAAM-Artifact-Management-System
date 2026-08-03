@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +24,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class ArtifactDetailFragment extends Fragment {
 
     private static final String ARG_ARTIFACT = "artifact";
@@ -184,9 +186,12 @@ public class ArtifactDetailFragment extends Fragment {
                 requireArguments().getString(ARG_UID),
                 requireArguments().getBoolean(ARG_IS_ADMIN, false));
         ViewGroup container = (ViewGroup) requireView().getParent();
-        getParentFragmentManager().beginTransaction()
+        FragmentManager fm = getParentFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fm.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(container.getId(), next)
+                .add(container.getId(), next)
+                .addToBackStack(null)
                 .commit();
     }
 
