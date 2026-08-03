@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageButton;
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +33,11 @@ public class ArtifactDetailFragment extends Fragment {
 
     private CommentManager commentManager;
     private CommentAdapter commentAdapter;
+    private LikeManager likeManager;
+    private SaveManager saveManager;
+    private ArtifactManager artifactManager;
+    private boolean likedByMe;
+    private boolean savedByMe;
     private final List<Comment> comments = new ArrayList<>();
     private Button buttonSortNewest, buttonSortOldest;
 
@@ -55,6 +62,7 @@ public class ArtifactDetailFragment extends Fragment {
         String uid = requireArguments().getString(ARG_UID);
         boolean isAdmin = requireArguments().getBoolean(ARG_IS_ADMIN, false);
         bindArtifact(view, artifact);
+        wireActions(view, artifact, uid, isAdmin);
 
         RecyclerView commentsView = view.findViewById(R.id.commentsRecyclerView);
         commentsView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -105,7 +113,68 @@ public class ArtifactDetailFragment extends Fragment {
             buttonSortNewest.setTextColor(inactive);
         });
     }
+    private void wireActions(View view, Artifact artifact, String uid, boolean isAdmin) {
+        String lot = artifact.getLotNumber();
 
+        ImageButton buttonLike = view.findViewById(R.id.buttonLikeDetail);
+        TextView textLikeCount = view.findViewById(R.id.textLikeCountDetail);
+        ImageButton buttonSave = view.findViewById(R.id.buttonSaveDetail);
+        ImageButton buttonDelete = view.findViewById(R.id.buttonDeleteDetail);
+
+        likeManager = new LikeManager();
+        saveManager = new SaveManager();
+
+        likeManager.startLive(uid, (counts, mine) -> {
+            Long count = counts.get(lot);
+            likedByMe = mine.contains(lot);
+            textLikeCount.setText(String.valueOf(count == null ? 0 : count));
+            buttonLike.setImageResource(likedByMe
+                    ? R.drawable.ic_heart_filled
+                    : R.drawable.ic_heart_outline);
+        });
+        buttonLike.setOnClickListener(v -> {
+            if (uid != null) likeManager.setLike(lot, uid, !likedByMe);
+        });
+
+        saveManager.startLive(uid, saved -> {
+            savedByMe = saved.contains(lot);
+            buttonSave.setImageResource(savedByMe
+                    ? R.drawable.ic_bookmark_filled
+                    : R.drawable.ic_bookmark_outline);
+        });
+        buttonSave.setOnClickListener(v -> {
+            if (uid != null) saveManager.setSaved(lot, uid, !savedByMe);
+        });
+
+        if (isAdmin) {
+            buttonDelete.setVisibility(View.VISIBLE);
+            buttonDelete.setOnClickListener(v -> confirmDelete(artifact));
+        }
+    }
+
+    private void confirmDelete(Artifact artifact) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_dialog_title)
+                .setMessage(R.string.delete_dialog_message)
+                .setPositiveButton(R.string.delete_dialog_confirm, (d, w) -> {
+                    if (artifactManager == null) artifactManager = new ArtifactManager();
+                    artifactManager.deleteArtifact(artifact.getLotNumber(), new ArtifactManager.WriteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (!isAdded()) return;
+                            Toast.makeText(requireContext(), R.string.toast_artifact_deleted, Toast.LENGTH_SHORT).show();
+                            getParentFragmentManager().popBackStack();
+                        }
+                        @Override
+                        public void onError(String errorMessage) {
+                            if (!isAdded()) return;
+                            Toast.makeText(requireContext(), "Delete failed: " + errorMessage, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .setNegativeButton(R.string.delete_dialog_cancel, null)
+                .show();
+    }
     private void bindArtifact(View view, Artifact artifact) {
         ((TextView) view.findViewById(R.id.textArtifactName)).setText(artifact.getName());
         ((TextView) view.findViewById(R.id.textLotNumber)).setText("Lot Number: " + artifact.getLotNumber());
@@ -155,6 +224,12 @@ public class ArtifactDetailFragment extends Fragment {
         super.onDestroyView();
         if (commentManager != null) {
             commentManager.stopLive();
+        }
+        if (likeManager != null) {
+            likeManager.stopLive();
+        }
+        if (saveManager != null) {
+            saveManager.stopLive();
         }
     }
 }
