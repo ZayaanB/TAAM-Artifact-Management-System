@@ -174,7 +174,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             if (url != null && !url.isEmpty()) {
                 Glide.with(imageArtifact.getContext())
                         .load(url)
-                        .centerCrop()
+                        .fitCenter()
                         .placeholder(R.drawable.ic_launcher_foreground)
                         .error(R.drawable.ic_launcher_foreground).into(imageArtifact);
             } else {
