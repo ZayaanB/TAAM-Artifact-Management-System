@@ -87,14 +87,13 @@
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:paddingHorizontal="32dp"
-                    android:text="@string/empty_no_artifacts"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:text="@string/empty_no_admins"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerManage"
                     android:layout_width="match_parent"
-                    android:layout_height="420dp"
+                    android:layout_height="300dp"
                     android:layout_marginTop="8dp"
                     android:nestedScrollingEnabled="true"
                     tools:listitem="@layout/row_manage_admin" />
@@ -108,17 +107,33 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:padding="8dp">
 
                     <TextView
                         android:id="@+id/textFormTitle"
                         style="@style/TextAppearance.TAAM.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/section_add_admin" />
+                        android:text="@string/section_add_admin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/buttonCancelEdit"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/back"
+                        android:padding="8dp"
+                        android:src="@android:drawable/ic_menu_close_clear_cancel"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/muted_taupe"
+                        tools:visibility="visible" />
 
                     <EditText
                         android:id="@+id/editEmail"
@@ -127,7 +142,20 @@
                         android:layout_marginTop="10dp"
                         android:hint="@string/hint_email"
                         android:inputType="textEmailAddress"
-                        android:maxLines="1" />
+                        android:maxLines="1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textFormTitle" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchIsManager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/label_is_manager"
+                        style="@style/TextAppearance.TAAM.Secondary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/editEmail" />
 
                     <Button
                         android:id="@+id/buttonSubmitArtifact"
@@ -135,8 +163,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="@string/action_add_admin" />
-                </LinearLayout>
+                        android:text="@string/action_add_admin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/switchIsManager" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

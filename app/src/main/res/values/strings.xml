@@ -40,6 +40,8 @@
     <string name="menu_open">Open menu</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_logout">Logout</string>
+    <string name="menu_manage_admins">Manage Admins</string>
+    <string name="menu_manage_artifacts">Manage Artifacts</string>
 
     <!-- Manage Artifacts Page -->
     <string name="manage_artifacts_title">Manage Artifacts</string>
@@ -104,6 +106,8 @@
     <string name="section_add_admin">Add Admin</string>
     <string name="section_remove_admin">Remove Admin</string>
     <string name="empty_no_admins">No Admins Found</string>
+    <string name="label_is_manager">Grant Manager permissions</string>
+    <string name="search_hint_admin">Search Admins</string>
 
     <!-- Admin Fields -->
     <string name="hint_search_admin">Search Admin</string>

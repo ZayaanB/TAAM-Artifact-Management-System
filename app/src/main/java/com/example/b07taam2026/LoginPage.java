@@ -58,10 +58,22 @@ public class LoginPage extends AppCompatActivity implements LoginPresenter.View 
         getSharedPreferences("LoginPrefs", MODE_PRIVATE)
                 .edit().putBoolean("keepLoggedIn", keep).apply();
     }
+
+    /*
     @Override
     public void navigateToHome(boolean isAdmin, String uid, String username) {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra(EXTRA_IS_ADMIN, isAdmin);
+        intent.putExtra("UID", uid);
+        intent.putExtra("USER_NAME", username);
+        startActivity(intent);
+        finish();
+    }
+    */
+    @Override
+    public void navigateToHome(String role, String uid, String username) {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra("USER_ROLE", role);
         intent.putExtra("UID", uid);
         intent.putExtra("USER_NAME", username);
         startActivity(intent);

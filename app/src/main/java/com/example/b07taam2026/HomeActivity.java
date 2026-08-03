@@ -12,9 +12,6 @@ import android.widget.Toast;
 import android.widget.ImageButton;
 import androidx.appcompat.widget.PopupMenu;
 
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -33,13 +30,11 @@ public class HomeActivity extends AppCompatActivity {
     private String username;
     private String uid;
     private boolean isAdmin;
-    private boolean isAdminMenuOpen = false;
-
+    private boolean isManager;
+    private String userRole;
     private ArtifactAdapter adapter;
     private ArtifactManager manager;
     private TextView textNoMatches;
-    private FloatingActionButton adminMenuBtn;
-    private ExtendedFloatingActionButton manageAdminsBtn, manageArtifactsBtn;
     private PaginationPrefs paginationPrefs;
     private TextView textPageIndicator;
     private Button buttonPrevPage, buttonNextPage;
@@ -51,7 +46,15 @@ public class HomeActivity extends AppCompatActivity {
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        isAdmin = getIntent().getBooleanExtra(LoginPage.EXTRA_IS_ADMIN, false);
+
+        userRole = getIntent().getStringExtra("USER_ROLE");
+        if(userRole == null){
+            userRole = "user";
+        }
+
+        isAdmin = userRole.equals("admin") || userRole.equals("admin_m");
+        isManager = userRole.equals("admin_m");
+
         username = getIntent().getStringExtra("USER_NAME");
         uid = getIntent().getStringExtra("UID");
         super.onCreate(savedInstanceState);
@@ -60,46 +63,10 @@ public class HomeActivity extends AppCompatActivity {
 
         textNoMatches = findViewById(R.id.textNoMatches);
 
-        adminMenuBtn = findViewById(R.id.adminMenuBtn);
-        manageAdminsBtn = findViewById(R.id.adminManageAdminsBtn);
-        manageArtifactsBtn = findViewById(R.id.adminManageArtifactsBtn);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.ime());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             return insets;
-        });
-
-        adminMenuBtn.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-        adminMenuBtn.setOnClickListener(v -> {
-            // TODO: open add/manage-artifact screen
-            if (!isAdminMenuOpen){// if the menu is closed, open it
-                manageAdminsBtn.setVisibility(View.VISIBLE);
-                manageArtifactsBtn.setVisibility(View.VISIBLE);
-
-                adminMenuBtn.setImageResource(R.drawable.ic_minus);
-                isAdminMenuOpen = true;
-            }
-            else{ // if menu is open close it
-                collapseAdminMenu();
-            }
-        });
-        manageArtifactsBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, ManageArtifactsActivity.class);
-            intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
-            startActivity(intent);
-        });
-        manageAdminsBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, UserDebugActivity.class);
-            startActivity(intent);
-        });
-
-        manageAdminsBtn.setOnClickListener(v ->{
-            Intent intent = new Intent(HomeActivity.this, ManageAdminsActivity.class /* This class does not exist yet*/);
-            intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
-            intent.putExtra("USER_NAME", username);
-            intent.putExtra("UID", uid);
-            startActivity(intent);
         });
 
         recyclerView = findViewById(R.id.artifactRecyclerView);
@@ -156,6 +123,10 @@ public class HomeActivity extends AppCompatActivity {
             PopupMenu popup = new PopupMenu(HomeActivity.this, v);
             popup.getMenuInflater().inflate(home_dropdown_menu, popup.getMenu());
 
+            popup.getMenu().findItem(R.id.menuManageArtifacts).setVisible(isAdmin);
+            popup.getMenu().findItem(R.id.menuManageAdmins).setVisible(isManager);
+
+
             // tick the saved option
             popup.getMenu().findItem(PAGE_SIZE_MENU_IDS[paginationPrefs.getSelectedIndex()]).setChecked(true);
 
@@ -181,33 +152,25 @@ public class HomeActivity extends AppCompatActivity {
                 } else if (id == R.id.menuLogout) {
                     logout();
                     return true;
+                } else if(id == R.id.menuManageArtifacts){
+                    Intent intent = new Intent(HomeActivity.this, ManageArtifactsActivity.class);
+                    intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
+                    startActivity(intent);
+                    return true;
+                } else if(id == R.id.menuManageAdmins){
+                    Intent intent = new Intent(HomeActivity.this, ManageAdminsActivity.class);
+                    intent.putExtra(LoginPage.EXTRA_IS_ADMIN, isAdmin);
+                    intent.putExtra("UID", uid);
+                    intent.putExtra("USER_NAME", username);
+                    startActivity(intent);
+                    return true;
                 }
                 return false;
             });
             popup.show();
         });
-
-        getSupportFragmentManager().addOnBackStackChangedListener(this::syncAdminFAB);
-        syncAdminFAB();
     }
 
-    private void syncAdminFAB() {
-        boolean artifactDetailOpen = getSupportFragmentManager().getBackStackEntryCount() > 0;
-
-        if (artifactDetailOpen) {
-            collapseAdminMenu();
-            adminMenuBtn.setVisibility(View.GONE);
-        } else {
-            adminMenuBtn.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    private void collapseAdminMenu() {
-        manageAdminsBtn.setVisibility(View.GONE);
-        manageArtifactsBtn.setVisibility(View.GONE);
-        adminMenuBtn.setImageResource(R.drawable.ic_add);
-        isAdminMenuOpen = false;
-    }
 
     private void applyPageSize(int index) {
         int size = PaginationPrefs.OPTIONS[index];

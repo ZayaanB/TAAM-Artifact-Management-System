@@ -24,6 +24,10 @@
         </menu>
     </item>
 
+    <item android:id="@+id/menuManageArtifacts" android:title="@string/menu_manage_artifacts" />
+
+    <item android:id="@+id/menuManageAdmins" android:title="@string/menu_manage_admins" />
+
     <item
         android:id="@+id/menuLogout"
         android:title="@string/menu_logout" />

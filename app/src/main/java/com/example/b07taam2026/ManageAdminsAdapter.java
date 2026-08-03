@@ -16,14 +16,17 @@ public class ManageAdminsAdapter extends RecyclerView.Adapter<ManageAdminsAdapte
 
     public interface Listener {
         void onRemoveClicked(User user);
+        void onEditClicked(User user);
     }
     private List<User> adminList;
     private final Listener listener;
     private final AdminFilter filter = new AdminFilter(this::notifyDataSetChanged);
+    private final String currentUid;
 
-    public ManageAdminsAdapter(List<User> adminList, Listener listener) {
+    public ManageAdminsAdapter(List<User> adminList, Listener listener, String currentUid) {
         this.filter.submit(adminList);
         this.listener = listener;
+        this.currentUid = currentUid;
     }
 
     @NonNull
@@ -53,22 +56,45 @@ public class ManageAdminsAdapter extends RecyclerView.Adapter<ManageAdminsAdapte
     }
 
     class ManageViewHolder extends RecyclerView.ViewHolder{
-        TextView textName, textEmail;
+        TextView textName, textEmail, textRole;
         ImageButton buttonRemove;
+        ImageButton buttonEdit;
 
 
         ManageViewHolder(@NonNull View itemView){
             super(itemView);
             textName = itemView.findViewById(R.id.textRowName);
             textEmail = itemView.findViewById(R.id.textRowEmail);
+            textRole = itemView.findViewById(R.id.textRowAdminType);
             buttonRemove = itemView.findViewById(R.id.buttonRowRemove);
+            buttonEdit = itemView.findViewById(R.id.buttonRowEdit);
         }
         void bind(User user){
             textName.setText(user.getUsername());
-            textEmail.setText("Email: " + user.getEmail());
+            textEmail.setText(user.getEmail() != null ? ("Email: " + user.getEmail()) : "Email Not found");
+
+            String role = user.getRole();
+            if("admin_m".equals(role)){
+                textRole.setText("Manager");
+            } else {
+                textRole.setText("Admin");
+            }
+
+            if (user.getUid() != null && user.getUid().equals(currentUid)){
+                buttonEdit.setVisibility(View.GONE);
+                buttonRemove.setVisibility(View.GONE);
+                textName.setText(user.getUsername() + " (You)");
+            } else {
+                buttonEdit.setVisibility(View.VISIBLE);
+                buttonRemove.setVisibility(View.VISIBLE);
+            }
+
             buttonRemove.setOnClickListener(v -> {
-                // TODO: Add code to remove user's admin perms from database
                 listener.onRemoveClicked(user);
+            });
+
+            buttonEdit.setOnClickListener(v -> {
+                listener.onEditClicked(user);
             });
         }
     }

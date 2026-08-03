@@ -6,7 +6,7 @@ public class LoginPresenter {
         void showError(String message);
         void setLoginEnabled(boolean enabled);
         void persistKeepSignedIn(boolean keep);
-        void navigateToHome(boolean isAdmin, String uid, String username);
+        void navigateToHome(String role, String uid, String username);
     }
 
     private View view;
@@ -48,6 +48,30 @@ public class LoginPresenter {
     }
 
     private void proceedWithRole(String uid, String fallbackName) {
+        roleManager.fetchRole(uid, new RoleManager.RoleStringCallback() {
+            @Override
+            public void onResult(String role) {
+                roleManager.fetchUsername(uid, username -> {
+                    if (view == null){
+                        return;
+                    }
+                    view.setLoginEnabled(true);
+                    view.navigateToHome(role, uid, username != null ? username:fallbackName);
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage){
+                if(view == null){
+                    return;
+                }
+                view.setLoginEnabled(true);
+                view.showError("Role error: " + errorMessage);
+            }
+        });
+
+        //TODO: Will be replaced by fetchRole
+        /*
         roleManager.isAdmin(uid, new RoleManager.RoleCallback() {
             @Override
             public void onResult(boolean isAdmin) {
@@ -64,6 +88,7 @@ public class LoginPresenter {
                 view.showError("Role error: " + errorMessage);
             }
         });
+        */
     }
 
     public void detachView() { this.view = null; }
