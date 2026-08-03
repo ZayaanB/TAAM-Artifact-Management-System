@@ -88,19 +88,6 @@
 
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/adminMenuBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/manage_items"
-        android:src="@drawable/ic_add"
-        app:tint="@color/white"
-        app:backgroundTint="@color/cinnabar"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ImageButton
         android:id="@+id/buttonMenu"
         android:layout_width="40dp"
@@ -114,37 +101,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/searchArtifacts"
         app:layout_constraintBottom_toBottomOf="@id/searchArtifacts" />
-  
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/adminManageAdminsBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="@string/manage_items"
-        android:textColor="@color/white"
-        app:backgroundTint="@color/cinnabar"
-        app:iconTint="@color/white"
-        app:icon="@drawable/ic_add"
-        android:visibility="gone"
-        android:text="@string/button_manage_admins"
-        app:layout_constraintBottom_toTopOf="@+id/adminManageArtifactsBtn"
-        app:layout_constraintEnd_toEndOf="@+id/adminManageArtifactsBtn"
-        app:layout_constraintStart_toStartOf="@+id/adminManageArtifactsBtn" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/adminManageArtifactsBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/manage_items"
-        android:textColor="@color/white"
-        app:backgroundTint="@color/cinnabar"
-        app:iconTint="@color/white"
-        app:icon="@drawable/ic_add"
-        android:visibility="gone"
-        android:text="@string/button_manage_artefacts"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/fragment_container"

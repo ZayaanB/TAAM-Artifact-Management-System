@@ -37,6 +37,8 @@
     <string name="menu_open">Open menu</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_logout">Logout</string>
+    <string name="menu_manage_admins">Manage Admins</string>
+    <string name="menu_manage_artifacts">Manage Artifacts</string>
 
     <!-- Manage Artifacts Page -->
     <string name="manage_artifacts_title">Manage Artifacts</string>

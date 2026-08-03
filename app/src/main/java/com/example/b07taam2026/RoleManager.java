@@ -30,6 +30,31 @@ public class RoleManager {
         void onResult(String username);
     }
 
+    public interface RoleStringCallback {
+        void onResult(String role);
+        void onError(String errorMessage);
+
+    }
+
+    public void fetchRole(String uid, RoleStringCallback callback){
+        if (uid == null){
+            callback.onError("No user is signed in");
+            return;
+        }
+        usersRef.child(uid).child("role")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String role = snapshot.getValue(String.class);
+                        callback.onResult(role != null ? role: "user");
+                    }
+
+                    @Override public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onError(error.getMessage());
+                    }
+                });
+    }
+
     public void isAdmin(String uid, RoleCallback callback) {
         if (uid == null) {
             callback.onError("No user is signed in");
