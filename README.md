@@ -54,8 +54,8 @@ For testing/grading, the following accounts can be used to sign in:
 
 | Role  | Email                | Password      | What it can do |
 |-------|----------------------|----------------|-----------------|
-| Admin | `test@email.com`     | `123`          | Full admin access, manage artifacts and admins |
-| Admin | `z@email.com`         | `test123`      | Full admin access, manage artifacts and admins |
+| Admin | `test@email.com`     | `password123`          | Full admin access, manage artifacts |
+| Manager | `z@email.com`         | `test123`      | Full admin access, manage artifacts and admins |
 | User  | `ryan@email.com`      | `password123`  | Browse, search, save, like, and comment on artifacts |
 
 ### Prerequisites
