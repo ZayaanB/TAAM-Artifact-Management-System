@@ -48,6 +48,16 @@ app/src/main/java/com/example/b07taam2026/
 
 ## Getting started
 
+### Test accounts
+
+For testing/grading, the following accounts can be used to sign in:
+
+| Role  | Email                | Password      | What it can do |
+|-------|----------------------|----------------|-----------------|
+| Admin | `test@email.com`     | `123`          | Full admin access, manage artifacts and admins |
+| Admin | `z@email.com`         | `test123`      | Full admin access, manage artifacts and admins |
+| User  | `ryan@email.com`      | `password123`  | Browse, search, save, like, and comment on artifacts |
+
 ### Prerequisites
 
 - [Android Studio](https://developer.android.com/studio) (recent stable version)
