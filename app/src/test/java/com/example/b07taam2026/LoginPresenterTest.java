@@ -7,16 +7,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.annotation.Config;
 
 public class LoginPresenterTest {
     @Mock
@@ -28,11 +24,6 @@ public class LoginPresenterTest {
     private LoginPresenter loginPresenter;
     private AutoCloseable closeable;
 
-    @Config(
-            sdk = 33,
-            manifest = Config.NONE,
-            instrumentedPackages = {"com.example.b07taam2026"}
-    )
     @Before
     public void setup() {
         closeable = MockitoAnnotations.openMocks(this);
@@ -52,7 +43,6 @@ public class LoginPresenterTest {
         verify(mockLoginView).showError("Enter both fields");
     }
 
-
     @Test
     public void testLoginSuccess() {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
@@ -71,6 +61,7 @@ public class LoginPresenterTest {
 
         verify(mockLoginView).navigateToHome("admin", "uid123", "JohnDoe");
     }
+
     @Test
     public void testLoginFailure() {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);

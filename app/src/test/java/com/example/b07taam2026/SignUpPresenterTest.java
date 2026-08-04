@@ -10,8 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.annotation.Config;
-
 
 public class SignUpPresenterTest {
     @Mock
@@ -21,11 +19,6 @@ public class SignUpPresenterTest {
     private SignUpPresenter signUpPresenter;
     private AutoCloseable closeable;
 
-    @Config(
-            sdk = 33,
-            manifest = Config.NONE,
-            instrumentedPackages = {"com.example.b07taam2026"}
-    )
     @Before
     public void setup() {
         closeable = MockitoAnnotations.openMocks(this);
@@ -44,11 +37,13 @@ public class SignUpPresenterTest {
         signUpPresenter.signUp("", "user", "pass123", "pass123");
         verify(mockSignUpView).showError("Please fill out all fields");
     }
+
     @Test
     public void testSignUpShortPassword() {
         signUpPresenter.signUp("a@b.com", "user", "123", "123");
         verify(mockSignUpView).showError("Password must be at least 6 characters");
     }
+
     @Test
     public void testSignupDifferentPassword(){
         signUpPresenter.signUp("a@b.com", "user", "password", "different");
@@ -80,7 +75,6 @@ public class SignUpPresenterTest {
         verify(mockSignUpView).setCreateEnabled(true);
         verify(mockSignUpView).showError("Sign up failed: Network Error");
     }
-
 
     @Test
     public void testSignUpDetachViewOnSuccess() {
