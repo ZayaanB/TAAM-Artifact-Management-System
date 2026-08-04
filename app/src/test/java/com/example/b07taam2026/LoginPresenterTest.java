@@ -1,5 +1,6 @@
 package com.example.b07taam2026;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,6 +42,8 @@ public class LoginPresenterTest {
     public void testLoginEmptyFields() {
         loginPresenter.login("", "password123", true);
         verify(mockLoginView).showError("Enter both fields");
+        verify(mockAuthManager, never()).login(anyString(), anyString(), any());
+        verify(mockLoginView, never()).setLoginEnabled(anyBoolean());
     }
 
     @Test
@@ -93,7 +96,7 @@ public class LoginPresenterTest {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
         loginPresenter.login("test@test.com", "password123", false);
 
-        verify(mockAuthManager).login(anyString(), anyString(), authCaptor.capture());
+        verify(mockAuthManager).login(eq("test@test.com"), eq("password123"), authCaptor.capture());
         authCaptor.getValue().onSuccess("uid123");
 
         ArgumentCaptor<RoleManager.RoleStringCallback> roleCaptor = ArgumentCaptor.forClass(RoleManager.RoleStringCallback.class);
@@ -108,7 +111,7 @@ public class LoginPresenterTest {
     public void testLoginDetachDuringAuth() {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
         loginPresenter.login("test@test.com", "pass", false);
-        verify(mockAuthManager).login(anyString(), anyString(), authCaptor.capture());
+        verify(mockAuthManager).login(eq("test@test.com"), eq("pass"), authCaptor.capture());
 
         loginPresenter.detachView(); // DETACH
         authCaptor.getValue().onFailure("error");
@@ -120,7 +123,7 @@ public class LoginPresenterTest {
     public void testLoginDetachDuringRoleFetch() {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
         loginPresenter.login("test@test.com", "password123", false);
-        verify(mockAuthManager).login(anyString(), anyString(), authCaptor.capture());
+        verify(mockAuthManager).login(eq("test@test.com"), eq("password123"), authCaptor.capture());
         authCaptor.getValue().onSuccess("uid123");
 
         ArgumentCaptor<RoleManager.RoleStringCallback> roleCaptor = ArgumentCaptor.forClass(RoleManager.RoleStringCallback.class);
@@ -136,7 +139,7 @@ public class LoginPresenterTest {
     public void testLoginDetachDuringUsernameFetch() {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
         loginPresenter.login("test@test.com", "password123", false);
-        verify(mockAuthManager).login(anyString(), anyString(), authCaptor.capture());
+        verify(mockAuthManager).login(eq("test@test.com"), eq("password123"), authCaptor.capture());
         authCaptor.getValue().onSuccess("uid123");
 
         ArgumentCaptor<RoleManager.RoleStringCallback> roleCaptor = ArgumentCaptor.forClass(RoleManager.RoleStringCallback.class);
