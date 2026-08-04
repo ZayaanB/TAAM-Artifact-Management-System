@@ -171,8 +171,11 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         String name = editName.getText().toString().trim();
         String category = editCategory.getText().toString().trim();
         String dynasty = editDynasty.getText().toString().trim();
+        String material = editMaterial.getText().toString().trim();
+        String description = editDescription.getText().toString().trim();
 
-        if (lot.isEmpty() || name.isEmpty() || category.isEmpty() || dynasty.isEmpty()) {
+        if (lot.isEmpty() || name.isEmpty() || category.isEmpty() || dynasty.isEmpty()
+                || material.isEmpty() || description.isEmpty()) {
             Toast.makeText(this, R.string.toast_fill_required, Toast.LENGTH_SHORT).show();
             return;
         }
