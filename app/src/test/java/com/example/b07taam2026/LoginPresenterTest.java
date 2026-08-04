@@ -117,6 +117,7 @@ public class LoginPresenterTest {
         authCaptor.getValue().onFailure("error");
 
         verify(mockLoginView, never()).showError(anyString());
+        verify(mockLoginView, never()).setLoginEnabled(true);
     }
 
     @Test
@@ -133,6 +134,7 @@ public class LoginPresenterTest {
         roleCaptor.getValue().onError("Database Offline");
 
         verify(mockLoginView, never()).showError(anyString());
+        verify(mockLoginView, never()).setLoginEnabled(true);
     }
 
     @Test
@@ -153,5 +155,6 @@ public class LoginPresenterTest {
         userCaptor.getValue().onResult("JohnDoe");
 
         verify(mockLoginView, never()).navigateToHome(anyString(), anyString(), anyString());
+        verify(mockLoginView, never()).setLoginEnabled(true);
     }
 }
