@@ -8,6 +8,7 @@ public class AuthManager {
 
     private final FirebaseAuth memberAuth;
 
+    // constructors for production and injected auth
     public AuthManager() {
         memberAuth = FirebaseAuth.getInstance();
     }
@@ -22,10 +23,12 @@ public class AuthManager {
                 return user.getUid();
     }
 
+    // whether somebody is currently signed in
     public boolean isLoggedIn() {
         return memberAuth.getCurrentUser() != null;
     }
 
+    // sign out the current user
     public void logout() {
         memberAuth.signOut();
     }

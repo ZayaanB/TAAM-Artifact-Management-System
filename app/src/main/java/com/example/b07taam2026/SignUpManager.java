@@ -12,6 +12,7 @@ import com.google.firebase.database.Transaction;
 import java.util.HashMap;
 import java.util.Map;
 
+// creates accounts and stores user profiles in firebase
 public class SignUpManager {
 
     public interface SignUpCallback {
@@ -23,6 +24,7 @@ public class SignUpManager {
     private final DatabaseReference usersRef;
     private final DatabaseReference usernamesRef;
 
+    // grab firebase auth and database references
     public SignUpManager() {
         FirebaseDatabase db = FirebaseDatabase
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com");
@@ -32,6 +34,7 @@ public class SignUpManager {
     }
 
     public void register(String email, String username, String password, SignUpCallback callback) {
+        // create user
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {

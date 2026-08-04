@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+// handles artifact likes in firebase
 public class LikeManager {
 
     private final DatabaseReference likesRef;
@@ -62,6 +63,7 @@ public class LikeManager {
         }
     }
 
+    // like or unlike an artifact
     public void setLike(String lotNumber, String uid, boolean liked) {
         DatabaseReference ref = likesRef.child(lotNumber).child(uid);
         if (liked) {

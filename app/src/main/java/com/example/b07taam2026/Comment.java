@@ -2,6 +2,7 @@ package com.example.b07taam2026;
 
 import java.util.Map;
 
+// data model for a comment with likes and replies
 public class Comment {
 
     private String id;
@@ -11,6 +12,7 @@ public class Comment {
     private Map<String, Boolean> likes;
     private Map<String, Comment> replies;
 
+    // constructors (empty one required by firebase)
     public Comment() {}
 
     public Comment(String id, String author, String text, long timestamp) {
@@ -20,6 +22,7 @@ public class Comment {
         this.timestamp = timestamp;
     }
 
+    // standard getters and setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getAuthor() { return author; }
@@ -37,6 +40,7 @@ public class Comment {
         return likes != null ? likes.size() : 0;
     }
 
+    // whether the current user liked comment
     public boolean isLikedBy(String uid) {
         return uid != null && likes != null && likes.containsKey(uid);
     }

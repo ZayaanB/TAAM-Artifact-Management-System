@@ -1,7 +1,9 @@
 package com.example.b07taam2026;
 
+// handles sign up logic between the view and manager
 public class SignUpPresenter {
 
+    // what the sign up screen must implement
     public interface View {
         void showError(String message);
         void showMessage(String message);
@@ -17,7 +19,9 @@ public class SignUpPresenter {
         this.signUpManager = signUpManager;
     }
 
+    // validate input and create the account
     public void signUp(String email, String username, String password, String confirm) {
+        // email and password requirements
         if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
             if (view != null) view.showError("Please fill out all fields");
             return;
@@ -31,6 +35,8 @@ public class SignUpPresenter {
             return;
         }
         if (view != null) view.setCreateEnabled(false);
+        
+        //handle user sign up
         signUpManager.register(email, username, password, new SignUpManager.SignUpCallback() {
             @Override
             public void onSuccess(String uid, String createdName) {

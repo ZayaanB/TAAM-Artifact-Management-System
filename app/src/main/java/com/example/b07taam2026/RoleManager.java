@@ -14,11 +14,13 @@ public class RoleManager {
     // users node of database
     private final DatabaseReference usersRef;
 
+    // connect to database
     public RoleManager() {
         usersRef = FirebaseDatabase
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
                 .getReference("users");
     }
+    // inject user for testing
     public RoleManager(DatabaseReference usersRef) {
         this.usersRef = usersRef;
     }
@@ -39,6 +41,7 @@ public class RoleManager {
 
     }
 
+    // fetch the raw role string from uid
     public void fetchRole(String uid, RoleStringCallback callback){
         if (uid == null){
             callback.onError("No user is signed in");
@@ -63,6 +66,8 @@ public class RoleManager {
             callback.onError("No user is signed in");
             return;
         }
+
+        // db role reference check
         usersRef.child(uid).child("role")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -81,6 +86,7 @@ public class RoleManager {
                 });
     }
 
+    // fetch the username for a uid
     public void fetchUsername(String uid, UsernameCallback callback) {
         if (uid == null) { callback.onResult(null); return; }
         usersRef.child(uid).child("username")

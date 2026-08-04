@@ -20,6 +20,7 @@ public class LoginPage extends AppCompatActivity implements LoginPresenter.View 
 
     private LoginPresenter presenter;
 
+    // set up views presenter and click listeners
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +35,11 @@ public class LoginPage extends AppCompatActivity implements LoginPresenter.View 
 
         presenter = new LoginPresenter(this, new AuthManager(), new RoleManager());
 
+        // auto login if keep signed in was checked
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         presenter.tryAutoLogin(prefs.getBoolean("keepLoggedIn", false));
 
+        // forward button clicks to the presenter
         buttonLogin.setOnClickListener(v -> presenter.login(
                 editUser.getText().toString().trim(),
                 editPass.getText().toString(),
@@ -53,23 +56,13 @@ public class LoginPage extends AppCompatActivity implements LoginPresenter.View 
     public void setLoginEnabled(boolean enabled) {
         buttonLogin.setEnabled(enabled);
     }
+    // save the keep signed in preference
     @Override
     public void persistKeepSignedIn(boolean keep) {
         getSharedPreferences("LoginPrefs", MODE_PRIVATE)
                 .edit().putBoolean("keepLoggedIn", keep).apply();
     }
 
-    /*
-    @Override
-    public void navigateToHome(boolean isAdmin, String uid, String username) {
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra(EXTRA_IS_ADMIN, isAdmin);
-        intent.putExtra("UID", uid);
-        intent.putExtra("USER_NAME", username);
-        startActivity(intent);
-        finish();
-    }
-    */
     @Override
     public void navigateToHome(String role, String uid, String username) {
         Intent intent = new Intent(this, HomeActivity.class);

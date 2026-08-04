@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+// horizontal carousel of related artifact cards
 public class RelatedArtifactAdapter extends RecyclerView.Adapter<RelatedArtifactAdapter.RelatedViewHolder> {
 
     private final List<Artifact> artifacts = new ArrayList<>();

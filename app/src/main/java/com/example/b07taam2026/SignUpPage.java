@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+// sign up screen that delegates logic to SignUpPresenter
 public class SignUpPage extends AppCompatActivity implements SignUpPresenter.View {
 
     private EditText editEmail, editUsername, editPass, editConfirm;
@@ -15,6 +16,7 @@ public class SignUpPage extends AppCompatActivity implements SignUpPresenter.Vie
 
     private SignUpPresenter presenter;
 
+    // page fields and view
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,7 @@ public class SignUpPage extends AppCompatActivity implements SignUpPresenter.Vie
         buttonGoToLogin.setOnClickListener(v -> finish());
     }
 
+    // error and success messages
     @Override
     public void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
@@ -50,6 +53,8 @@ public class SignUpPage extends AppCompatActivity implements SignUpPresenter.Vie
     public void setCreateEnabled(boolean enabled) {
         buttonCreateAccount.setEnabled(enabled);
     }
+
+    // proceed to home page
     @Override
     public void navigateToHome(String uid, String username) {
         Intent intent = new Intent(this, HomeActivity.class);

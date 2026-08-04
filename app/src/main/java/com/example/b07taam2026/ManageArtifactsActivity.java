@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+// admin screen to add, edit, and delete artifacts
 public class ManageArtifactsActivity extends AppCompatActivity implements ManageArtifactAdapter.Listener {
 
     private NestedScrollView manageScroll;
@@ -176,6 +177,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
             return;
         }
 
+        // creating a new artifact
         if (editingLot == null) {
             buttonSubmit.setEnabled(false);
             Artifact artifact = buildArtifactFromForm();
@@ -195,6 +197,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
                 }
             });
         }
+        // saving changes to an existing artifact
         else {
             buttonSubmit.setEnabled(false);
             Artifact artifact = buildArtifactFromForm();
@@ -240,6 +243,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         return artifact;
     }
 
+    // empty field becomes null
     private String nullIfEmpty(EditText field) {
         String value = field.getText().toString().trim();
         return value.isEmpty() ? null : value;
@@ -278,6 +282,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         manageScroll.post(() -> manageScroll.smoothScrollTo(0, cardAddForm.getTop()));
     }
 
+    // confirm then delete artifact and its image
     @Override
     public void onDeleteClicked(Artifact artifact) {
         new AlertDialog.Builder(this)
@@ -317,6 +322,7 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         buttonCancelEdit.setVisibility(View.GONE);
     }
 
+    // empty all form fields
     private void clearForm() {
         EditText[] fields = {editLot, editName, editCategory, editDynasty, editMaterial,
                 editDimensions, editCulturalOrigin, editCurrentLocation, editAccessionNumber,

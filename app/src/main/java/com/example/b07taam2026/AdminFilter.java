@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+// filters the admin list by search query
 public class AdminFilter {
     private final List<User> allAdmins = new ArrayList<>();
     private final List<User> visibleAdmins = new ArrayList<>();
@@ -22,6 +23,7 @@ public class AdminFilter {
         return visibleAdmins.get(pos);
     }
 
+    // replace the full admin list
     public void submit(List<User> admins) {
         allAdmins.clear();
         if (admins != null) allAdmins.addAll(admins);
@@ -33,6 +35,7 @@ public class AdminFilter {
         applyFilter();
     }
 
+    // rebuild visible list from the query
     private void applyFilter(){
         visibleAdmins.clear();
         for (User a : allAdmins) {
@@ -48,6 +51,7 @@ public class AdminFilter {
         return contains(a.getUsername()) || contains(a.getEmail());
     }
 
+    // case insensitive substring check
     private boolean contains(String field) {
         return field != null && field.toLowerCase(Locale.ROOT).contains(query);
     }

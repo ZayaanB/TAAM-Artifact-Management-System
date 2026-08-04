@@ -13,12 +13,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+// handles comment storage in firebase
 public class CommentManager {
 
     private final DatabaseReference commentsRef;
     private ValueEventListener liveListener;
     private DatabaseReference activeRef;
 
+    // comments node of database
     public CommentManager() {
         commentsRef = FirebaseDatabase
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
@@ -93,6 +95,7 @@ public class CommentManager {
         commentsRef.child(lotNumber).child(commentId).removeValue();
     }
 
+    // remove a single reply (admin action)
     public void deleteReply(String lotNumber, String commentId, String replyId) {
         commentsRef.child(lotNumber).child(commentId).child("replies").child(replyId).removeValue();
     }

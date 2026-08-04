@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+// search filtering and pagination over the artifact list
 public class ArtifactFilter {
     private final List<Artifact> allArtifacts = new ArrayList<>();
     private final List<Artifact> visibleArtifacts = new ArrayList<>();
@@ -31,10 +32,12 @@ public class ArtifactFilter {
         page = 0;
         notifyChanged();
     }
+    // jump to a page
     public void setPage(int p) {
         page = clampPage(p);
         notifyChanged();
     }
+    // standard getters
     public int getPage() { return page; }
     public int getPageSize() { return pageSize; }
     public int getTotalCount() { return visibleArtifacts.size(); }
