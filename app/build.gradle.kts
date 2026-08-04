@@ -39,6 +39,15 @@ android {
             }
         }
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+                it.jvmArgs("-noverify")
+            }
+        }
+    }
 }
 
 dependencies {
