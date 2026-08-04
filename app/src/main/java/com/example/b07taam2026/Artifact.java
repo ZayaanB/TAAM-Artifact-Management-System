@@ -19,6 +19,7 @@ public class Artifact implements java.io.Serializable {
     private String notes;
     private String imageUrl;
 
+    // constructors, empty one needed by firebase
     public Artifact() {}
 
     public Artifact(String name, String lotNumber, String category, String material,
@@ -31,6 +32,7 @@ public class Artifact implements java.io.Serializable {
         this.description = description;
     }
 
+    // standard getters and setters
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }

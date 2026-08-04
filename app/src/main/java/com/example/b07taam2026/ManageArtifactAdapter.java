@@ -49,6 +49,7 @@ public class ManageArtifactAdapter extends RecyclerView.Adapter<ManageArtifactAd
 
     public void submitList(List<Artifact> artifacts) { filter.submit(artifacts); }
 
+    // update the search query
     public void setQuery(String q) { filter.setQuery(q); }
 
     private String safe(String s) {

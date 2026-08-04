@@ -35,8 +35,12 @@ public class User {
     public void setRole(String role) { 
         this.role = role; 
     }
-    public String getUid() { return uid; }
-    public void setUid(String uid) { this.uid = uid; }
+    public String getUid() { 
+        return uid; 
+    }
+    public void setUid(String uid) { 
+        this.uid = uid; 
+    }
     public boolean isAdmin() {
         return "admin".equals(role);
     }

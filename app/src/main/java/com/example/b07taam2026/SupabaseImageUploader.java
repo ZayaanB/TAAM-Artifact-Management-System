@@ -22,6 +22,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+// code from professor Rawads sample code
 public class SupabaseImageUploader {
 
     public interface UploadCallback {
@@ -129,7 +130,7 @@ public class SupabaseImageUploader {
         });
     }
 
-    // delete image by public url
+    // delete image by public url -- added code
     public void deleteImage(String publicUrl) {
         if (isBlank(publicUrl)) {
             return;

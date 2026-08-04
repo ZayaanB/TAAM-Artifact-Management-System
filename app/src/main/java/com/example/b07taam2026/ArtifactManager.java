@@ -13,11 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// firebase crud layer for artifacts
 public class ArtifactManager {
     private final DatabaseReference rootRef;
     private final DatabaseReference artifactsRef;
     private ValueEventListener liveListener;
 
+    // connect to the firebase database
     public ArtifactManager() {
         FirebaseDatabase database = FirebaseDatabase
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com");

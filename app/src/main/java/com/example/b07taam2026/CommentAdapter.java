@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+// list adapter for comments and their replies
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
+    // comment sort orders
     public enum SortMode { NEWEST, OLDEST }
 
     private static final SimpleDateFormat DATE_FORMAT =
@@ -47,17 +49,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         this.isAdmin = isAdmin;
     }
 
+    // switch sort order and refresh
     public void setSortMode(SortMode sortMode) {
         this.sortMode = sortMode;
         sortAndNotify();
     }
 
+    // replace contents with fresh comments
     public void submitList(List<Comment> fresh) {
         comments.clear();
         comments.addAll(fresh);
         sortAndNotify();
     }
 
+    // sort by timestamp then redraw the list
     private void sortAndNotify() {
         if (sortMode == SortMode.NEWEST) {
             Collections.sort(comments, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
@@ -166,11 +171,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     ((TextView) replyView.findViewById(R.id.textCommentText))
                             .setText(entry.getValue().getText());
 
+                    // replies cannot be liked or replied to
                     replyView.findViewById(R.id.buttonLike).setVisibility(View.GONE);
                     replyView.findViewById(R.id.buttonReply).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplyInput).setVisibility(View.GONE);
                     replyView.findViewById(R.id.layoutReplies).setVisibility(View.GONE);
 
+                    // admins can remove replies
                     View replyDelete = replyView.findViewById(R.id.buttonDeleteComment);
                     if (isAdmin) {
                         replyDelete.setVisibility(View.VISIBLE);

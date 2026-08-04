@@ -29,6 +29,7 @@ public class ManageAdminsAdapter extends RecyclerView.Adapter<ManageAdminsAdapte
         this.currentUid = currentUid;
     }
 
+    // inflate admin row
     @NonNull
     @Override
     public ManageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
@@ -47,20 +48,24 @@ public class ManageAdminsAdapter extends RecyclerView.Adapter<ManageAdminsAdapte
         return filter.size();
     }
 
+    // pass new list to the filter
     public void submitList(List<User> admins){
         filter.submit(admins);
     }
 
+    // update the search query
     public void setQuery(String q){
         filter.setQuery(q);
     }
 
+    // holds views for one admin row
     class ManageViewHolder extends RecyclerView.ViewHolder{
         TextView textName, textEmail, textRole;
         ImageButton buttonRemove;
         ImageButton buttonEdit;
 
 
+        // look up row views
         ManageViewHolder(@NonNull View itemView){
             super(itemView);
             textName = itemView.findViewById(R.id.textRowName);
@@ -69,10 +74,12 @@ public class ManageAdminsAdapter extends RecyclerView.Adapter<ManageAdminsAdapte
             buttonRemove = itemView.findViewById(R.id.buttonRowRemove);
             buttonEdit = itemView.findViewById(R.id.buttonRowEdit);
         }
+        // display admin info and link up buttons
         void bind(User user){
             textName.setText(user.getUsername());
             textEmail.setText(user.getEmail() != null ? ("Email: " + user.getEmail()) : "Email Not found");
 
+            // show readable role label
             String role = user.getRole();
             if("admin_m".equals(role)){
                 textRole.setText("Manager");
@@ -80,6 +87,7 @@ public class ManageAdminsAdapter extends RecyclerView.Adapter<ManageAdminsAdapte
                 textRole.setText("Admin");
             }
 
+            // hide buttons for the signed in user
             if (user.getUid() != null && user.getUid().equals(currentUid)){
                 buttonEdit.setVisibility(View.GONE);
                 buttonRemove.setVisibility(View.GONE);

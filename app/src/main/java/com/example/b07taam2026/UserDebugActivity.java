@@ -27,6 +27,7 @@ public class UserDebugActivity extends AppCompatActivity {
     private TextView textEmpty;
     private List<User> userList;
 
+    // set up user list and load users
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +47,12 @@ public class UserDebugActivity extends AppCompatActivity {
         loadUsers();
     }
 
+    // load users from firebase db
     private void loadUsers() {
         try {
             usersRef = FirebaseDatabase
                     .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
-                    .getReference("users");
+                    .getReference("users"); //users key
         } catch (Exception e) {
             Toast.makeText(this, "Firebase not available", Toast.LENGTH_LONG).show();
             textEmpty.setVisibility(View.VISIBLE);
@@ -58,6 +60,7 @@ public class UserDebugActivity extends AppCompatActivity {
             return;
         }
 
+        // updates to db
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

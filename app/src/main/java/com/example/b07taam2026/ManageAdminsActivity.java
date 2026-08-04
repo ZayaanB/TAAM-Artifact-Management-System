@@ -22,6 +22,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import java.util.ArrayList;
 import java.util.List;
 
+// manager screen to add, edit, and remove admins
 public class ManageAdminsActivity extends AppCompatActivity implements ManageAdminsAdapter.Listener {
 
     private ImageButton buttonBack;
@@ -99,6 +100,7 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
                 return;
             }
 
+            // pick role based on manager switch
             String role;
             if(switchIsManager.isChecked()){
                 role = "admin_m";
@@ -165,6 +167,7 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
         }
     }
 
+    // demote admin back to regular user
     @Override
     public void onRemoveClicked(User user){
         manager.removeAdmin(user.getUid(), new AdminManager.WriteCallback() {
@@ -180,6 +183,7 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
         });
     }
 
+    // enter edit mode for selected admin
     @Override
     public void onEditClicked(User user){
         editingUid = user.getUid();
@@ -197,6 +201,7 @@ public class ManageAdminsActivity extends AppCompatActivity implements ManageAdm
         manageScroll.post(() -> manageScroll.smoothScrollTo(0, cardAddForm.getTop()));
     }
 
+    // reset form back to add mode
     private void editExitMode(){
         editingUid = null;
 

@@ -11,19 +11,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+// recycler adapter for the debug user list
 public class UserDebugAdapter extends RecyclerView.Adapter<UserDebugAdapter.UserViewHolder> {
 
     private List<User> users;
 
+    // given user list
     public UserDebugAdapter(List<User> users) {
         this.users = users;
     }
 
+    // swap in new list and refresh
     public void submitList(List<User> users) {
         this.users = users;
         notifyDataSetChanged();
     }
 
+    // create user row
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -32,6 +36,7 @@ public class UserDebugAdapter extends RecyclerView.Adapter<UserDebugAdapter.User
         return new UserViewHolder(view);
     }
 
+    // fill row with user details and role
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = users.get(position);
@@ -46,6 +51,7 @@ public class UserDebugAdapter extends RecyclerView.Adapter<UserDebugAdapter.User
         holder.textRole.setBackgroundColor(badgeColor);
     }
 
+    // number of users shown
     @Override
     public int getItemCount() {
         return users != null ? users.size() : 0;
@@ -54,6 +60,7 @@ public class UserDebugAdapter extends RecyclerView.Adapter<UserDebugAdapter.User
     static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView textUsername, textEmail, textRole, textUid;
 
+        // look up row views
         UserViewHolder(View itemView) {
             super(itemView);
             textUsername = itemView.findViewById(R.id.textUsername);

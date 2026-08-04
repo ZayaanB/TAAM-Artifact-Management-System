@@ -13,6 +13,7 @@ public class PaginationPrefs {
 
     private final SharedPreferences prefs;
 
+    // open the shared preferences file
     public PaginationPrefs(Context context) {
         prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
     }

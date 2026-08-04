@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// shows the user liked and favourited artifacts
 public class ProfileActivity extends AppCompatActivity {
 
     private ArtifactAdapter adapter;
@@ -41,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // read user info passed through the intent
         username = getIntent().getStringExtra("USER_NAME");
         uid = getIntent().getStringExtra("UID");
         if (uid == null) {
@@ -52,12 +54,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         textEmpty = findViewById(R.id.textProfileEmpty);
 
+        // set up the artifact list
         RecyclerView recyclerView = findViewById(R.id.profileRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ArtifactAdapter(new ArrayList<>());
         adapter.setOnReadMoreClickListener(this::showArtifactDetail);
         recyclerView.setAdapter(adapter);
 
+        // switch between likes and favourites tabs
         MaterialButtonToggleGroup tabs = findViewById(R.id.toggleProfileTabs);
         tabs.check(R.id.buttonTabLikes);
         tabs.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
@@ -66,6 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
             refresh();
         });
 
+        // listen for live artifact updates
         artifactManager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
             public void onResult(List<Artifact> artifacts) {
@@ -81,12 +86,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // track which lots this user liked
         likeManager.startLive(uid, (counts, mine) -> {
             likedLots.clear();
             likedLots.addAll(mine);
             refresh();
         });
 
+        // track which lots this user favourited
         saveManager.startLive(uid, saved -> {
             favouriteLots.clear();
             favouriteLots.addAll(saved);

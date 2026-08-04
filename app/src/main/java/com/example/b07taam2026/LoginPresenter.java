@@ -2,6 +2,7 @@ package com.example.b07taam2026;
 
 public class LoginPresenter {
 
+    // what the login screen must implement
     public interface View {
         void showError(String message);
         void setLoginEnabled(boolean enabled);
@@ -19,6 +20,7 @@ public class LoginPresenter {
         this.roleManager = roleManager;
     }
 
+    // skip the login form if already signed in
     public void tryAutoLogin(boolean keepSignedInPref) {
         if (keepSignedInPref && authManager.isLoggedIn()) {
             if (view != null) view.setLoginEnabled(false);
@@ -26,12 +28,14 @@ public class LoginPresenter {
         }
     }
 
+    // validate input then attempt sign in
     public void login(String username, String password, boolean keepSignedIn) {
         if (username.isEmpty() || password.isEmpty()) {
             if (view != null) view.showError("Enter both fields");
             return;
         }
         if (view != null) view.setLoginEnabled(false);
+        // attempt firebase sign in
         authManager.login(username, password, new AuthManager.AuthCallback() {
             @Override
             public void onSuccess(String uid) {
@@ -47,6 +51,7 @@ public class LoginPresenter {
         });
     }
 
+    // fetch role and username and go home
     private void proceedWithRole(String uid, String fallbackName) {
         roleManager.fetchRole(uid, new RoleManager.RoleStringCallback() {
             @Override

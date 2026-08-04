@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+// recyclerview adapter showing artifact cards
 public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.ArtifactViewHolder> {
 
     private final ArtifactFilter filter = new ArtifactFilter(this::notifyDataSetChanged);
@@ -66,6 +67,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         return filter.size();
     }
 
+    // start live like and save updates
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -136,6 +138,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         return field != null && field.toLowerCase(Locale.ROOT).contains(query);
     }
 
+    // holds the views for one artifact card
     class ArtifactViewHolder extends RecyclerView.ViewHolder {
         private final TextView textName;
         private final TextView textLotNumber;
@@ -162,6 +165,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             buttonReadMore = itemView.findViewById(R.id.buttonReadMore);
         }
 
+        // display one artifact on the card
         void bind(Artifact artifact, @Nullable OnReadMoreClickListener listener) {
             textName.setText(artifact.getName());
             textLotNumber.setText("Lot Number: " + artifact.getLotNumber());
@@ -181,6 +185,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
                 imageArtifact.setImageResource(R.drawable.ic_launcher_foreground);
             }
 
+            // show like count and heart state
             String lot = artifact.getLotNumber();
             Long count = likeCounts.get(lot);
             boolean liked = likedByMe.contains(lot);
@@ -205,6 +210,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
                     saveManager.setSaved(lot, uid, !saved);
             });
 
+            // open detail view via the callback
             buttonReadMore.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onReadMore(artifact);

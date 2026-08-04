@@ -47,6 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        // read the role passed from login
         userRole = getIntent().getStringExtra("USER_ROLE");
         if(userRole == null){
             userRole = "user";
@@ -69,12 +70,14 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
+        // set up the artifact list
         recyclerView = findViewById(R.id.artifactRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ArtifactAdapter(new ArrayList<>());
         adapter.setOnReadMoreClickListener(this::showArtifactDetail);
         recyclerView.setAdapter(adapter);
 
+        // restore pagination prefs and page buttons
         paginationPrefs = new PaginationPrefs(this);
         adapter.setPageSize(paginationPrefs.getPageSize()); // restore user pref for page size
 
@@ -85,6 +88,7 @@ public class HomeActivity extends AppCompatActivity {
         buttonNextPage.setOnClickListener(v -> goToPage(adapter.getPage() + 1));
         buttonPrevPage.setOnClickListener(v -> goToPage(adapter.getPage() - 1));
 
+        // live artifact updates from firebase
         manager = new ArtifactManager();
         manager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
@@ -100,6 +104,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        // filter the list as the user types
         SearchView search = findViewById(R.id.searchArtifacts);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -180,6 +185,7 @@ public class HomeActivity extends AppCompatActivity {
         updatePaginationUI();
     }
 
+    // switch page and scroll back to top
     private void goToPage(int page) {
         adapter.setPage(page);
         recyclerView.scrollToPosition(0);
@@ -215,6 +221,7 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 
+    // open the detail fragment for an artifact
     private void showArtifactDetail(Artifact artifact) {
         String username = getIntent().getStringExtra("USER_NAME");
         String uid = getIntent().getStringExtra("UID");

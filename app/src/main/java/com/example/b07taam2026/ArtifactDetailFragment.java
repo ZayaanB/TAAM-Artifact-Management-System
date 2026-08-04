@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+// full detail screen for a single artifact
 @SuppressWarnings("deprecation")
 public class ArtifactDetailFragment extends Fragment {
 
@@ -70,6 +71,7 @@ public class ArtifactDetailFragment extends Fragment {
         bindArtifact(view, artifact);
         wireActions(view, artifact, uid, isAdmin);
 
+        // comments list setup
         RecyclerView commentsView = view.findViewById(R.id.commentsRecyclerView);
         commentsView.setLayoutManager(new LinearLayoutManager(requireContext()));
         commentAdapter = new CommentAdapter(comments);
@@ -81,6 +83,7 @@ public class ArtifactDetailFragment extends Fragment {
         wireSort(view);
         wireBack(view);
 
+        // live comment updates
         commentManager.startLive(artifact.getLotNumber(), new CommentManager.CommentCallback() {
             @Override
             public void onResult(List<Comment> fresh) {
@@ -102,6 +105,7 @@ public class ArtifactDetailFragment extends Fragment {
         view.findViewById(R.id.buttonBackDetail).setOnClickListener(v -> getParentFragmentManager().popBackStack());
     }
 
+    // newest/oldest sort buttons for comments
     private void wireSort(View view) {
         buttonSortNewest = view.findViewById(R.id.buttonSortNewest);
         buttonSortOldest = view.findViewById(R.id.buttonSortOldest);
@@ -120,6 +124,7 @@ public class ArtifactDetailFragment extends Fragment {
             buttonSortNewest.setTextColor(inactive);
         });
     }
+    // like, save and delete controls
     private void wireActions(View view, Artifact artifact, String uid, boolean isAdmin) {
         String lot = artifact.getLotNumber();
 
@@ -131,6 +136,7 @@ public class ArtifactDetailFragment extends Fragment {
         likeManager = new LikeManager();
         saveManager = new SaveManager();
 
+        // live like count and curr user like state
         likeManager.startLive(uid, (counts, mine) -> {
             Long count = counts.get(lot);
             likedByMe = mine.contains(lot);
@@ -153,12 +159,14 @@ public class ArtifactDetailFragment extends Fragment {
             if (uid != null) saveManager.setSaved(lot, uid, !savedByMe);
         });
 
+        // only admins can delete
         if (isAdmin) {
             buttonDelete.setVisibility(View.VISIBLE);
             buttonDelete.setOnClickListener(v -> confirmDelete(artifact));
         }
     }
 
+    // ask before deleting the artifact
     private void confirmDelete(Artifact artifact) {
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.delete_dialog_title)
@@ -182,6 +190,7 @@ public class ArtifactDetailFragment extends Fragment {
                 .setNegativeButton(R.string.delete_dialog_cancel, null)
                 .show();
     }
+    // show artifact name, image and fields
     private void bindArtifact(View view, Artifact artifact) {
         ((TextView) view.findViewById(R.id.textArtifactName)).setText(artifact.getName());
 
@@ -301,6 +310,7 @@ public class ArtifactDetailFragment extends Fragment {
         submit.setOnClickListener(v -> submitComment(input));
     }
 
+    // validate and post a new comment
     private void submitComment(EditText input) {
         String text = input.getText().toString().trim();
         if (text.isEmpty()) {
@@ -316,6 +326,7 @@ public class ArtifactDetailFragment extends Fragment {
         input.setText("");
     }
 
+    // related artifacts carousel setup
     private void wireRelated(View view, Artifact artifact) {
         RecyclerView relatedView = view.findViewById(R.id.relatedArtifactsRecyclerView);
         relatedView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -323,6 +334,7 @@ public class ArtifactDetailFragment extends Fragment {
         relatedAdapter.setOnArtifactClickListener(this::openRelatedArtifact);
         relatedView.setAdapter(relatedAdapter);
 
+        // watch all artifacts and filter related ones
         artifactManager = new ArtifactManager();
         artifactManager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
@@ -340,6 +352,7 @@ public class ArtifactDetailFragment extends Fragment {
         });
     }
 
+    // open detail screen for a related artifact
     private void openRelatedArtifact(Artifact artifact) {
         ArtifactDetailFragment next = ArtifactDetailFragment.newInstance(artifact,
                 requireArguments().getString(ARG_USERNAME),
@@ -347,6 +360,7 @@ public class ArtifactDetailFragment extends Fragment {
                 requireArguments().getBoolean(ARG_IS_ADMIN, false));
         ViewGroup container = (ViewGroup) requireView().getParent();
         FragmentManager fm = getParentFragmentManager();
+        // clear old detail screens first
         fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fm.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -355,6 +369,7 @@ public class ArtifactDetailFragment extends Fragment {
                 .commit();
     }
 
+    // filter artifacts related to the current one
     static List<Artifact> findRelated(Artifact current, List<Artifact> artifacts) {
         String lot = current.getLotNumber();
         List<Artifact> related = new ArrayList<>();
@@ -366,6 +381,7 @@ public class ArtifactDetailFragment extends Fragment {
         return related;
     }
 
+    // same dynasty and location is related
     static boolean isRelated(Artifact current, Artifact other) {
         return equal(current.getDynasty(), other.getDynasty())
                 && equal(current.getCurrentLocation(), other.getCurrentLocation());

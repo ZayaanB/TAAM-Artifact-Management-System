@@ -13,12 +13,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashSet;
 import java.util.Set;
 
+// handles saved artifacts in firebase
 public class SaveManager {
 
     private final DatabaseReference usersRef;
     private DatabaseReference savedRef;
     private ValueEventListener liveListener;
 
+    // db instantiation
     public SaveManager() {
         usersRef = FirebaseDatabase
                 .getInstance("https://taam-artifact-management-default-rtdb.firebaseio.com")
@@ -35,7 +37,7 @@ public class SaveManager {
             callback.onResult(new HashSet<>());
             return;
         }
-
+        // save action button
         savedRef = usersRef.child(uid).child("saved");
         liveListener = new ValueEventListener() {
             @Override
