@@ -84,13 +84,12 @@ public class ArtifactFilter {
     }
 
     private boolean matches(Artifact a) {
-        // check if search text is a substring of these 6 mandatory fields
-        return contains(a.getName())
-                || contains(a.getLotNumber())
-                || contains(a.getCategory())
-                || contains(a.getMaterial())
-                || contains(a.getDynasty())
-                || contains(a.getDescription());
+        // check if search text is a substring of any artifact field
+        for (String field : a.searchableValues()) {
+            if (contains(field)) return true;
+        }
+
+        return false;
     }
 
     private boolean contains(String field) {
