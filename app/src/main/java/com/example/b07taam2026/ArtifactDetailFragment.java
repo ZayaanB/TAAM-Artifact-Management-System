@@ -190,7 +190,7 @@ public class ArtifactDetailFragment extends Fragment {
         if (url != null && !url.isEmpty()) {
             Glide.with(image.getContext())
                     .load(url)
-                    .centerCrop()
+                    .fitCenter()
                     .placeholder(R.drawable.ic_launcher_foreground)
                     .error(R.drawable.ic_launcher_foreground)
                     .into(image);
