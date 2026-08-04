@@ -24,6 +24,7 @@ public class ManageArtifactAdapter extends RecyclerView.Adapter<ManageArtifactAd
     private final Listener listener;
 
     public ManageArtifactAdapter(List<Artifact> artifacts, Listener listener) {
+        filter.setPageSize(ArtifactFilter.PAGE_SIZE_ALL);
         filter.submit(artifacts);
         this.listener = listener;
     }
