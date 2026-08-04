@@ -45,7 +45,8 @@ For testing/grading, the following accounts can be used to sign in:
 ### Running tests
 
 ```bash
-./gradlew test                    # unit tests (JUnit, Mockito, Robolectric)
+Run the `ExampleUnitTest` file (`app/src/test/java/com/example/b07taam2026/ExampleUnitTest.java`).
+# unit tests (JUnit, Mockito, Robolectric)
 ```
 ## Tech stack
 
