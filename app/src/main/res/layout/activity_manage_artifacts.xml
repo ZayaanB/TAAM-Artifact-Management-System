@@ -153,35 +153,29 @@
                         android:inputType="text"
                         android:maxLines="1" />
 
-                    <EditText
-                        android:id="@+id/editCategory"
-                        style="@style/Widget.TAAM.EditText"
+                    <Spinner
+                        android:id="@+id/spinnerCategory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="@string/hint_category"
-                        android:inputType="text"
-                        android:maxLines="1" />
+                        android:backgroundTint="@color/muted_taupe"
+                        android:spinnerMode="dropdown" />
 
-                    <EditText
-                        android:id="@+id/editDynasty"
-                        style="@style/Widget.TAAM.EditText"
+                    <Spinner
+                        android:id="@+id/spinnerDynasty"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="@string/hint_dynasty"
-                        android:inputType="text"
-                        android:maxLines="1" />
+                        android:backgroundTint="@color/muted_taupe"
+                        android:spinnerMode="dropdown" />
 
-                    <EditText
-                        android:id="@+id/editMaterial"
-                        style="@style/Widget.TAAM.EditText"
+                    <Spinner
+                        android:id="@+id/spinnerMaterial"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="@string/hint_material"
-                        android:inputType="text"
-                        android:maxLines="1" />
+                        android:backgroundTint="@color/muted_taupe"
+                        android:spinnerMode="dropdown" />
 
                     <EditText
                         android:id="@+id/editDimensions"
