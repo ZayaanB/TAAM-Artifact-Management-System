@@ -54,6 +54,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         textEmpty = findViewById(R.id.textProfileEmpty);
 
+        // show "<username>'s Profile" as the page title
+        TextView textProfileTitle = findViewById(R.id.textProfileTitle);
+        textProfileTitle.setText(username != null
+                ? getString(R.string.profile_title_user, username)
+                : getString(R.string.profile_title));
+
         // set up the artifact list
         RecyclerView recyclerView = findViewById(R.id.profileRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
