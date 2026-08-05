@@ -47,6 +47,14 @@ public class LoginPresenterTest {
     }
 
     @Test
+    public void testLoginEmptyPassword() {
+        loginPresenter.login("test@test.com", "", false);
+        verify(mockLoginView).showError("Enter both fields");
+        verify(mockAuthManager, never()).login(anyString(), anyString(), any());
+        verify(mockLoginView, never()).setLoginEnabled(anyBoolean());
+    }
+
+    @Test
     public void testLoginSuccess() {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
         loginPresenter.login("test@test.com", "pass123", true);
@@ -92,6 +100,14 @@ public class LoginPresenterTest {
     }
 
     @Test
+    public void testAutoLoginNotLoggedIn() {
+        when(mockAuthManager.isLoggedIn()).thenReturn(false);
+        loginPresenter.tryAutoLogin(true);
+        verify(mockLoginView, never()).setLoginEnabled(anyBoolean());
+        verify(mockRoleManager, never()).fetchRole(anyString(), any());
+    }
+
+    @Test
     public void testLoginRoleError() {
         ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
         loginPresenter.login("test@test.com", "password123", false);
@@ -118,6 +134,20 @@ public class LoginPresenterTest {
 
         verify(mockLoginView, never()).showError(anyString());
         verify(mockLoginView, never()).setLoginEnabled(true);
+    }
+
+    @Test
+    public void testLoginDetachDuringAuthSuccess() {
+        ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
+        loginPresenter.login("test@test.com", "pass", true);
+        verify(mockAuthManager).login(eq("test@test.com"), eq("pass"), authCaptor.capture());
+
+        loginPresenter.detachView(); // DETACH
+        authCaptor.getValue().onSuccess("uid123");
+
+        verify(mockLoginView, never()).persistKeepSignedIn(anyBoolean());
+        verify(mockLoginView, never()).setLoginEnabled(true);
+        verify(mockLoginView, never()).navigateToHome(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -156,5 +186,52 @@ public class LoginPresenterTest {
 
         verify(mockLoginView, never()).navigateToHome(anyString(), anyString(), anyString());
         verify(mockLoginView, never()).setLoginEnabled(true);
+    }
+
+    @Test
+    public void testLoginSuccessNullUsername() {
+        ArgumentCaptor<AuthManager.AuthCallback> authCaptor = ArgumentCaptor.forClass(AuthManager.AuthCallback.class);
+        loginPresenter.login("test@test.com", "pass123", false);
+
+        verify(mockAuthManager).login(eq("test@test.com"), eq("pass123"), authCaptor.capture());
+        authCaptor.getValue().onSuccess("uid123");
+
+        ArgumentCaptor<RoleManager.RoleStringCallback> roleCaptor = ArgumentCaptor.forClass(RoleManager.RoleStringCallback.class);
+        verify(mockRoleManager).fetchRole(eq("uid123"), roleCaptor.capture());
+        roleCaptor.getValue().onResult("user");
+
+        ArgumentCaptor<RoleManager.UsernameCallback> userCaptor = ArgumentCaptor.forClass(RoleManager.UsernameCallback.class);
+        verify(mockRoleManager).fetchUsername(eq("uid123"), userCaptor.capture());
+        userCaptor.getValue().onResult(null); // null username → fallback
+
+        verify(mockLoginView).navigateToHome("user", "uid123", "test@test.com");
+    }
+
+    // view == null branch on tryAutoLogin's setLoginEnabled guard
+    @Test
+    public void testAutoLoginNullView() {
+        when(mockAuthManager.isLoggedIn()).thenReturn(true);
+        when(mockAuthManager.getCurrentUid()).thenReturn("uid123");
+        loginPresenter.detachView();
+        loginPresenter.tryAutoLogin(true);
+        verify(mockLoginView, never()).setLoginEnabled(anyBoolean());
+    }
+
+    // view == null branch on empty-fields showError guard
+    @Test
+    public void testLoginNullViewEmptyFields() {
+        loginPresenter.detachView();
+        loginPresenter.login("", "pass", false);
+        verify(mockLoginView, never()).showError(anyString());
+        verify(mockAuthManager, never()).login(anyString(), anyString(), any());
+    }
+
+    // view == null branch on valid-fields setLoginEnabled(false) guard
+    @Test
+    public void testLoginNullViewValidFields() {
+        loginPresenter.detachView();
+        loginPresenter.login("a@b.com", "pass123", true);
+        verify(mockLoginView, never()).setLoginEnabled(anyBoolean());
+        verify(mockAuthManager).login(eq("a@b.com"), eq("pass123"), any());
     }
 }
