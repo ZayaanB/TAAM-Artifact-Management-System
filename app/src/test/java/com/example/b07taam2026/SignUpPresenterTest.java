@@ -133,4 +133,40 @@ public class SignUpPresenterTest {
         verify(mockSignUpView, never()).setCreateEnabled(true);
         verify(mockSignUpView, never()).showError(anyString());
     }
+
+    // view == null branch on empty-fields showError guard
+    @Test
+    public void testSignUpNullViewEmptyFields() {
+        signUpPresenter.detachView();
+        signUpPresenter.signUp("", "user", "pass", "pass");
+        verify(mockSignUpView, never()).showError(anyString());
+        verify(mockSignUpManager, never()).register(anyString(), anyString(), anyString(), any());
+    }
+
+    // view == null branch on short-password showError guard
+    @Test
+    public void testSignUpNullViewShortPassword() {
+        signUpPresenter.detachView();
+        signUpPresenter.signUp("a@b.com", "user", "123", "123");
+        verify(mockSignUpView, never()).showError(anyString());
+        verify(mockSignUpManager, never()).register(anyString(), anyString(), anyString(), any());
+    }
+
+    // view == null branch on mismatch-password showError guard
+    @Test
+    public void testSignUpNullViewMismatchPassword() {
+        signUpPresenter.detachView();
+        signUpPresenter.signUp("a@b.com", "user", "pass123", "different");
+        verify(mockSignUpView, never()).showError(anyString());
+        verify(mockSignUpManager, never()).register(anyString(), anyString(), anyString(), any());
+    }
+
+    // view == null branch on valid-input setCreateEnabled(false) guard
+    @Test
+    public void testSignUpNullViewValidFields() {
+        signUpPresenter.detachView();
+        signUpPresenter.signUp("a@b.com", "user", "pass123", "pass123");
+        verify(mockSignUpView, never()).setCreateEnabled(anyBoolean());
+        verify(mockSignUpManager).register(eq("a@b.com"), eq("user"), eq("pass123"), any());
+    }
 }

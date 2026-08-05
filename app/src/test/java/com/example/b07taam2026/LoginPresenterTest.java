@@ -206,4 +206,32 @@ public class LoginPresenterTest {
 
         verify(mockLoginView).navigateToHome("user", "uid123", "test@test.com");
     }
+
+    // view == null branch on tryAutoLogin's setLoginEnabled guard
+    @Test
+    public void testAutoLoginNullView() {
+        when(mockAuthManager.isLoggedIn()).thenReturn(true);
+        when(mockAuthManager.getCurrentUid()).thenReturn("uid123");
+        loginPresenter.detachView();
+        loginPresenter.tryAutoLogin(true);
+        verify(mockLoginView, never()).setLoginEnabled(anyBoolean());
+    }
+
+    // view == null branch on empty-fields showError guard
+    @Test
+    public void testLoginNullViewEmptyFields() {
+        loginPresenter.detachView();
+        loginPresenter.login("", "pass", false);
+        verify(mockLoginView, never()).showError(anyString());
+        verify(mockAuthManager, never()).login(anyString(), anyString(), any());
+    }
+
+    // view == null branch on valid-fields setLoginEnabled(false) guard
+    @Test
+    public void testLoginNullViewValidFields() {
+        loginPresenter.detachView();
+        loginPresenter.login("a@b.com", "pass123", true);
+        verify(mockLoginView, never()).setLoginEnabled(anyBoolean());
+        verify(mockAuthManager).login(eq("a@b.com"), eq("pass123"), any());
+    }
 }
