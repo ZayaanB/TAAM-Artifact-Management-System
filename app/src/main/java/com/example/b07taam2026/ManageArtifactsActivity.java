@@ -188,8 +188,10 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         String name = editName.getText().toString().trim();
         String category = spinnerValue(spinnerCategory);
         String dynasty = spinnerValue(spinnerDynasty);
+        String material = spinnerValue(spinnerMaterial);
+        String description = editDescription.getText().toString().trim();
 
-        if (lot.isEmpty() || name.isEmpty() || category == null || dynasty == null) {
+        if (lot.isEmpty() || name.isEmpty() || category == null || dynasty == null || material == null || description.isEmpty()) {
             Toast.makeText(this, R.string.toast_fill_required, Toast.LENGTH_SHORT).show();
             return;
         }
