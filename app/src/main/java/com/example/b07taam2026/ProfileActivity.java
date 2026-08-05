@@ -23,6 +23,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ArtifactAdapter adapter;
     private TextView textEmpty;
+    private TextView textUsername;
 
     private final ArtifactManager artifactManager = new ArtifactManager();
     private final LikeManager likeManager = new LikeManager();
@@ -53,6 +54,10 @@ public class ProfileActivity extends AppCompatActivity {
         findViewById(R.id.buttonProfileBack).setOnClickListener(v -> finish());
 
         textEmpty = findViewById(R.id.textProfileEmpty);
+
+        // show the logged-in user's name under the title
+        textUsername = findViewById(R.id.textProfileUsername);
+        textUsername.setText(username);
 
         // set up the artifact list
         RecyclerView recyclerView = findViewById(R.id.profileRecyclerView);

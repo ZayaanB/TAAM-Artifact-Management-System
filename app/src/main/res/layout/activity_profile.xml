@@ -35,6 +35,21 @@
         app:layout_constraintStart_toEndOf="@id/buttonProfileBack"
         app:layout_constraintTop_toTopOf="@id/buttonProfileBack" />
 
+    <TextView
+        android:id="@+id/textProfileUsername"
+        style="@style/TextAppearance.TAAM.Secondary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="@string/hint_username"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/buttonProfileBack"
+        app:layout_constraintTop_toBottomOf="@id/textProfileTitle" />
+
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleProfileTabs"
         android:layout_width="0dp"
@@ -46,7 +61,7 @@
         app:singleSelection="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonProfileBack">
+        app:layout_constraintTop_toBottomOf="@id/textProfileUsername">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonTabLikes"
