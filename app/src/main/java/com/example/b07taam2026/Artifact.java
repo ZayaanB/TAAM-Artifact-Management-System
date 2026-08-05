@@ -32,6 +32,14 @@ public class Artifact implements java.io.Serializable {
         this.description = description;
     }
 
+    public String[] searchableValues() {
+        return new String[] {
+                name, lotNumber, category, material, dynasty, description, culturalOrigin,
+                dimensions, conditionReport, currentLocation, acquisitionMethod, provenance,
+                accessionNumber, notes
+        };
+    }
+
     // standard getters and setters
     public String getName() { return name; }
 

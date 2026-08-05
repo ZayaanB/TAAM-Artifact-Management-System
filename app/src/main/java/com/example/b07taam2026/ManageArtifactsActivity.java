@@ -55,6 +55,8 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     // image uploaded but unsaved
     private String sessionUploadedUrl = null;
 
+    public static final String EXTRA_EDIT_ARTIFACT = "EDIT_ARTIFACT";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +109,11 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         buttonCancelEdit.setOnClickListener(v -> exitEditMode());
         buttonUploadImage.setOnClickListener(v -> imagePicker.launch("image/*"));
         findViewById(R.id.buttonBackManage).setOnClickListener(v -> finish());
+
+        Artifact toEdit = (Artifact) getIntent().getSerializableExtra(EXTRA_EDIT_ARTIFACT);
+        if (toEdit != null) {
+            onEditClicked(toEdit);
+        }
     }
 
     private void bindViews() {
@@ -179,10 +186,13 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     private void handleSubmit() {
         String lot = editLot.getText().toString().trim();
         String name = editName.getText().toString().trim();
-        String category = spinnerValue(spinnerCategory);
-        String dynasty = spinnerValue(spinnerDynasty);
+        String category = editCategory.getText().toString().trim();
+        String dynasty = editDynasty.getText().toString().trim();
+        String material = editMaterial.getText().toString().trim();
+        String description = editDescription.getText().toString().trim();
 
-        if (lot.isEmpty() || name.isEmpty() || category == null || dynasty == null) {
+        if (lot.isEmpty() || name.isEmpty() || category.isEmpty() || dynasty.isEmpty()
+                || material.isEmpty() || description.isEmpty()) {
             Toast.makeText(this, R.string.toast_fill_required, Toast.LENGTH_SHORT).show();
             return;
         }
