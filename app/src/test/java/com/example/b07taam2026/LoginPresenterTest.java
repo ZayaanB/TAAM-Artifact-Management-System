@@ -14,6 +14,9 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import com.example.b07taam2026.auth.AuthManager;
+import com.example.b07taam2026.auth.LoginPresenter;
+import com.example.b07taam2026.data.RoleManager;
 
 public class LoginPresenterTest {
     @Mock

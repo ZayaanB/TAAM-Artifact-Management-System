@@ -13,6 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import com.example.b07taam2026.auth.SignUpManager;
+import com.example.b07taam2026.auth.SignUpPresenter;
 
 public class SignUpPresenterTest {
     @Mock
