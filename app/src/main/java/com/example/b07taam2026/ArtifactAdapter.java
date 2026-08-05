@@ -200,6 +200,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
                     saveManager.setSaved(lot, uid, !saved);
             });
 
+            // open detail view via the callback
             buttonReadMore.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onReadMore(artifact);

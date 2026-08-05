@@ -55,6 +55,8 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     // image uploaded but unsaved
     private String sessionUploadedUrl = null;
 
+    public static final String EXTRA_EDIT_ARTIFACT = "EDIT_ARTIFACT";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +109,11 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         buttonCancelEdit.setOnClickListener(v -> exitEditMode());
         buttonUploadImage.setOnClickListener(v -> imagePicker.launch("image/*"));
         findViewById(R.id.buttonBackManage).setOnClickListener(v -> finish());
+
+        Artifact toEdit = (Artifact) getIntent().getSerializableExtra(EXTRA_EDIT_ARTIFACT);
+        if (toEdit != null) {
+            onEditClicked(toEdit);
+        }
     }
 
     private void bindViews() {

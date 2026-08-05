@@ -1,5 +1,6 @@
 package com.example.b07taam2026;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -132,6 +133,7 @@ public class ArtifactDetailFragment extends Fragment {
         TextView textLikeCount = view.findViewById(R.id.textLikeCountDetail);
         ImageButton buttonSave = view.findViewById(R.id.buttonSaveDetail);
         ImageButton buttonDelete = view.findViewById(R.id.buttonDeleteDetail);
+        ImageButton buttonEdit = view.findViewById(R.id.buttonEditDetail);
 
         likeManager = new LikeManager();
         saveManager = new SaveManager();
@@ -163,6 +165,13 @@ public class ArtifactDetailFragment extends Fragment {
         if (isAdmin) {
             buttonDelete.setVisibility(View.VISIBLE);
             buttonDelete.setOnClickListener(v -> confirmDelete(artifact));
+
+            buttonEdit.setVisibility(View.VISIBLE);
+            buttonEdit.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), ManageArtifactsActivity.class);
+                intent.putExtra(ManageArtifactsActivity.EXTRA_EDIT_ARTIFACT, artifact);
+                startActivity(intent);
+            });
         }
     }
 
@@ -339,6 +348,15 @@ public class ArtifactDetailFragment extends Fragment {
         artifactManager.startLive(new ArtifactManager.ArtifactCallback() {
             @Override
             public void onResult(List<Artifact> artifacts) {
+
+                // re-bind in the case that the artifact was just edited
+                for (Artifact fresh : artifacts) {
+                    if (artifact.getLotNumber() != null && artifact.getLotNumber().equals(fresh.getLotNumber())) {
+                        bindArtifact(view, fresh);
+                        break;
+                    }
+                }
+
                 List<Artifact> related = findRelated(artifact, artifacts);
                 relatedAdapter.submitList(related);
                 view.findViewById(R.id.sectionRelatedArtifacts)
