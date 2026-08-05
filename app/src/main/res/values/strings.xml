@@ -118,6 +118,7 @@
 
     <!-- Profile Page -->
     <string name="profile_title">Profile</string>
+    <string name="profile_title_user">%1$s\'s Profile</string>
     <string name="tab_likes">Likes</string>
     <string name="tab_favourites">Favourites</string>
     <string name="empty_no_likes">You haven\'t liked any artifacts yet</string>
