@@ -4,13 +4,14 @@ Android application for managing and viewing artifacts from the TAAM collection.
 
 ## Features
 
-- **Authentication** — email/password sign up and login (Firebase Auth)
-- **Artifact browsing** — view, filter, and search artifacts in the collection, with pagination
-- **Artifact details** — dedicated detail view with related artifacts
-- **Comments & likes** — comment on artifacts and like/save them for later
-- **User profiles** — view and manage account info
-- **Admin tools** — manage artifacts (add/edit/remove) and manage admin users, gated by role
-- **Image uploads** — artifact images uploaded to Supabase storage
+- **Authentication**: email/password sign up and login and stay signed in feature (Firebase Auth)
+- **Artifact browsing**: view, filter, and search artifacts in the collection, with pagination
+- **Artifact details**: dedicated detail view with related artifacts (description, date, materials, etc.)
+- **Comments & likes**: comment on artifacts and like/save them for later and reply to others comments
+- **User profiles**: full login flow, view and interact with artifacts. View liked and saved artifacts
+- **Admin tools**: manage artifacts (add/edit/remove) and manage admin users (manager exclusive)
+- **Admin moderation**: manage comments on artifacts and delete innappropriate comments
+- **Image uploads**: artifact images uploaded to Supabase storage and deleted on artifact deletion
 
 ## Getting started
 
@@ -21,15 +22,10 @@ For testing/grading, the following accounts can be used to sign in:
 | Role  | Email                | Password      | What it can do |
 |-------|----------------------|----------------|-----------------|
 | Admin | `test@email.com`     | `password123`          | Full admin access, manage artifacts |
-| Manager | `z@email.com`         | `test123`      | Full admin access, manage artifacts and admins |
+| Manager (super admin) | `z@email.com`         | `test123`      | Full admin access, manage artifacts and admins |
 | User  | `ryan@email.com`      | `password123`  | Browse, search, save, like, and comment on artifacts |
 
-### Prerequisites
-
-- [Android Studio](https://developer.android.com/studio) (recent stable version)
-- JDK 11+
-- A Firebase project with **Realtime Database** and **Authentication (Email/Password)** enabled
-- A Supabase project with a **Storage** bucket for artifact images
+*Note you can make your own accounts too and they will default to user. To promote to admin use Manager account to promote and demote.*
 
 ### Setup
 

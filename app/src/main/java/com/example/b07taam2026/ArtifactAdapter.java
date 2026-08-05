@@ -123,16 +123,6 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
         return filter.getTotalCount();
     }
 
-    private boolean matches(Artifact a) {
-        // check if search text is a substring of these 6 mandatory fields
-        return contains(a.getName())
-                || contains(a.getLotNumber())
-                || contains(a.getCategory())
-                || contains(a.getMaterial())
-                || contains(a.getDynasty())
-                || contains(a.getDescription());
-    }
-
     private boolean contains(String field) {
         // simple substring matching
         return field != null && field.toLowerCase(Locale.ROOT).contains(query);
@@ -178,7 +168,7 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
             if (url != null && !url.isEmpty()) {
                 Glide.with(imageArtifact.getContext())
                         .load(url)
-                        .fitCenter()
+                        .centerCrop()
                         .placeholder(R.drawable.ic_launcher_foreground)
                         .error(R.drawable.ic_launcher_foreground).into(imageArtifact);
             } else {
@@ -210,7 +200,6 @@ public class ArtifactAdapter extends RecyclerView.Adapter<ArtifactAdapter.Artifa
                     saveManager.setSaved(lot, uid, !saved);
             });
 
-            // open detail view via the callback
             buttonReadMore.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onReadMore(artifact);

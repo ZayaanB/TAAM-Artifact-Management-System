@@ -3,16 +3,21 @@ package com.example.b07taam2026;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,10 +32,12 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     private NestedScrollView manageScroll;
     private View cardAddForm;
     private TextView textFormTitle, textEditingBanner, textNoMatches;
-    private EditText editLot, editName, editCategory, editDynasty, editMaterial,
+    private EditText editLot, editName,
             editDimensions, editCulturalOrigin, editCurrentLocation, editAccessionNumber,
             editAcquisitionMethod, editProvenance, editConditionReport, editDescription,
             editNotes, editImageUrl;
+    // fixed option dropdowns
+    private Spinner spinnerCategory, spinnerDynasty, spinnerMaterial;
     private Button buttonSubmit, buttonCancelEdit, buttonUploadImage;
 
     private ManageArtifactAdapter adapter;
@@ -110,9 +117,12 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         textNoMatches = findViewById(R.id.textNoMatches);
         editLot = findViewById(R.id.editLot);
         editName = findViewById(R.id.editName);
-        editCategory = findViewById(R.id.editCategory);
-        editDynasty = findViewById(R.id.editDynasty);
-        editMaterial = findViewById(R.id.editMaterial);
+        spinnerCategory = findViewById(R.id.spinnerCategory);
+        spinnerDynasty = findViewById(R.id.spinnerDynasty);
+        spinnerMaterial = findViewById(R.id.spinnerMaterial);
+        spinnerCategory.setAdapter(buildSpinnerAdapter(R.array.artifact_categories));
+        spinnerDynasty.setAdapter(buildSpinnerAdapter(R.array.artifact_dynasties));
+        spinnerMaterial.setAdapter(buildSpinnerAdapter(R.array.artifact_materials));
         editDimensions = findViewById(R.id.editDimensions);
         editCulturalOrigin = findViewById(R.id.editCulturalOrigin);
         editCurrentLocation = findViewById(R.id.editCurrentLocation);
@@ -169,10 +179,10 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     private void handleSubmit() {
         String lot = editLot.getText().toString().trim();
         String name = editName.getText().toString().trim();
-        String category = editCategory.getText().toString().trim();
-        String dynasty = editDynasty.getText().toString().trim();
+        String category = spinnerValue(spinnerCategory);
+        String dynasty = spinnerValue(spinnerDynasty);
 
-        if (lot.isEmpty() || name.isEmpty() || category.isEmpty() || dynasty.isEmpty()) {
+        if (lot.isEmpty() || name.isEmpty() || category == null || dynasty == null) {
             Toast.makeText(this, R.string.toast_fill_required, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -227,9 +237,9 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
     private Artifact buildArtifactFromForm() {
         Artifact artifact = new Artifact();
         artifact.setName(editName.getText().toString().trim());
-        artifact.setCategory(editCategory.getText().toString().trim());
-        artifact.setDynasty(editDynasty.getText().toString().trim());
-        artifact.setMaterial(nullIfEmpty(editMaterial));
+        artifact.setCategory(spinnerValue(spinnerCategory));
+        artifact.setDynasty(spinnerValue(spinnerDynasty));
+        artifact.setMaterial(spinnerValue(spinnerMaterial));
         artifact.setDimensions(nullIfEmpty(editDimensions));
         artifact.setCulturalOrigin(nullIfEmpty(editCulturalOrigin));
         artifact.setCurrentLocation(nullIfEmpty(editCurrentLocation));
@@ -249,6 +259,57 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
         return value.isEmpty() ? null : value;
     }
 
+    // spinner adapter
+    private ArrayAdapter<CharSequence> buildSpinnerAdapter(int arrayRes) {
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
+                R.layout.spinner_form_item, getResources().getTextArray(arrayRes)) {
+            // placeholder row cannot be picked
+            @Override
+            public boolean isEnabled(int position) {
+                return position != 0;
+            }
+
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                TextView view = (TextView) super.getView(position, convertView, parent);
+                view.setTextColor(placeholderAwareColor(position));
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                TextView view = (TextView) super.getDropDownView(position, convertView, parent);
+                view.setTextColor(placeholderAwareColor(position));
+                return view;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
+    }
+
+    private int placeholderAwareColor(int position) {
+        return ContextCompat.getColor(this, position == 0 ? R.color.muted_taupe : R.color.ink);
+    }
+
+    private String spinnerValue(Spinner spinner) {
+        return spinner.getSelectedItemPosition() == 0
+                ? null : spinner.getSelectedItem().toString();
+    }
+
+    // select the matching option or fall back to the placeholder
+    private void selectSpinnerValue(Spinner spinner, String value) {
+        if (value != null) {
+            for (int i = 1; i < spinner.getCount(); i++) {
+                if (value.equals(spinner.getItemAtPosition(i).toString())) {
+                    spinner.setSelection(i);
+                    return;
+                }
+            }
+        }
+        spinner.setSelection(0);
+    }
+
     // prefill form, lock the lot number
     @Override
     public void onEditClicked(Artifact artifact) {
@@ -258,9 +319,9 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
 
         editLot.setText(artifact.getLotNumber());
         editName.setText(artifact.getName());
-        editCategory.setText(artifact.getCategory());
-        editDynasty.setText(artifact.getDynasty());
-        editMaterial.setText(artifact.getMaterial());
+        selectSpinnerValue(spinnerCategory, artifact.getCategory());
+        selectSpinnerValue(spinnerDynasty, artifact.getDynasty());
+        selectSpinnerValue(spinnerMaterial, artifact.getMaterial());
         editDimensions.setText(artifact.getDimensions());
         editCulturalOrigin.setText(artifact.getCulturalOrigin());
         editCurrentLocation.setText(artifact.getCurrentLocation());
@@ -324,13 +385,17 @@ public class ManageArtifactsActivity extends AppCompatActivity implements Manage
 
     // empty all form fields
     private void clearForm() {
-        EditText[] fields = {editLot, editName, editCategory, editDynasty, editMaterial,
+        EditText[] fields = {editLot, editName,
                 editDimensions, editCulturalOrigin, editCurrentLocation, editAccessionNumber,
                 editAcquisitionMethod, editProvenance, editConditionReport, editDescription,
                 editNotes, editImageUrl};
         for (EditText field : fields) {
             field.setText("");
         }
+        // reset dropdowns to their placeholder
+        spinnerCategory.setSelection(0);
+        spinnerDynasty.setSelection(0);
+        spinnerMaterial.setSelection(0);
         editLot.requestFocus();
     }
 
