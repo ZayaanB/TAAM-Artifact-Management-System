@@ -2,6 +2,12 @@
 
 Android app for browsing, searching, and managing the TAAM artifact collection. Users can explore artifacts, like and save them, and leave comments; admins can add, edit, and delete artifacts, moderate comments, and manage other admins.
 
+Demo Link:
+https://drive.google.com/file/d/1KYRwgma0v-SkNNz24oVE3xuI9o6dz0K6/view?usp=sharing
+
+Work Log:
+https://docs.google.com/document/d/1r8RXQWJgK_IKUnG3j0GN0yBo20hQQwgygyzGeS_kiw8/edit?usp=sharing
+
 ## Demo
 
 https://github.com/user-attachments/assets/5c57a6ac-ffb6-4fd2-8419-71d78008bd78
