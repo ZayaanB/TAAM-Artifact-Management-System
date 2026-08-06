@@ -11,4 +11,5 @@
     <color name="muted_taupe_dark">#46423A</color>
     <color name="border_tan">#E0D8C8</color>
     <color name="white">#FFFFFF</color>
+    <color name="ic_launcher_bg">#513124</color>
 </resources>

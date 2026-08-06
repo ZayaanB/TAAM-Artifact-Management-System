@@ -16,3 +16,4 @@ local.properties
 .idea/
 app/google-services.json
 app/Starter Application.zip
+*.mp4
