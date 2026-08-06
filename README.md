@@ -4,7 +4,8 @@ Android app for browsing, searching, and managing the TAAM artifact collection. 
 
 ## Demo
 
-<!-- Drag and drop TAAM_demo.mp4 here while editing this file on github.com -->
+https://github.com/user-attachments/assets/5c57a6ac-ffb6-4fd2-8419-71d78008bd78
+
 
 ## Features
 
